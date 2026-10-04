@@ -41,25 +41,23 @@
 
 Separate-file storage is opt-in and defaults to off, so existing Markdown documents keep their current same-file behavior. VS Code's built-in Markdown preview only receives the source document text, so external definitions are not currently merged into preview rendering; editor navigation and the Footnotes side editor do resolve them.
 
-### Enhanced Markdown preview
+### Standalone Markdown preview
 
-Moondancer includes [Markdown Preview Enhanced](https://github.com/shd101wyy/vscode-markdown-preview-enhanced) in its extension pack instead of vendoring or maintaining a fork. Its preview theme and code-block theme default to `github-dark.css`, while an explicit user or workspace Markdown Preview Enhanced theme still takes precedence. The built-in VS Code preview fallback also receives [Markdown Preview Github Styling](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-preview-github-styles), defaulted to its dark GitHub theme, so switching away from the enhanced renderer does not drop the GitHub-like presentation.
+Moondancer does not require Markdown Preview Enhanced, Markdown Preview Github Styling, or any other Marketplace extension. Its preview commands use VS Code's built-in Markdown renderer directly, while Moondancer contributes its own dark GitHub-style stylesheet and footnote Markdown-it plugin.
 
-`vscode-markdown-footnote.preferEnhancedPreview` defaults to `true`. The **Moondancer: Open Markdown Preview** and **Moondancer: Open Markdown Preview to the Side** commands route to Markdown Preview Enhanced when available and fall back to VS Code's built-in preview otherwise. Markdown Preview Enhanced's normal preview shortcuts remain available.
-
-**Moondancer: Start Preview Server** starts Markdown Preview Enhanced's Crossnote server. By default Moondancer waits for the configured Crossnote port and opens the localhost site inside VS Code's integrated Simple Browser. `vscode-markdown-footnote.previewServerBrowser` can instead use the external browser or start the server without opening a browser. The existing `markdown-preview-enhanced.crossnoteServePort` setting controls the port.
+VS Code 1.121 or newer is required so the built-in preview supplies Mermaid rendering in addition to its existing KaTeX math, link and anchor handling, raw HTML support, preview security, and editor/preview synchronization. There is no Crossnote server or external browser dependency in Moondancer's Markdown preview path.
 
 For preview regression testing, `test/workspace/preview-kitchen-sink.md` intentionally exercises frontmatter, headings and fragment links, external and relative links, inline and block math, GitHub-style text formatting, task lists, tables, fenced code, Mermaid, images, raw HTML, details/summary, inline styles, and footnotes in one document.
 
-### MDX preview
+### Standalone MDX preview
 
-Moondancer treats MDX as its own preview path instead of pretending JSX is plain Markdown. Opening an `.mdx` document activates the MDX language path and routes **Moondancer: Open Preview** through [Modern MDX Preview](https://marketplace.visualstudio.com/items?itemName=ggfincke.vsc-mdx-preview), with [MDX](https://marketplace.visualstudio.com/items?itemName=unifiedjs.vscode-mdx) installed for language support. If the older Xiaoyi `xyc.vscode-mdx-preview` extension is already installed, Moondancer recognizes it as a compatibility fallback without installing both preview implementations together.
+Moondancer also owns the MDX path directly. It registers the `.mdx` language and grammar itself and does not install or query a separate MDX language or preview extension.
 
-MDX preview defaults to `github-dark` for the document and code themes, keeps automatic light-theme switching off, leaves scripts disabled under strict security, keeps MDX/Markdown links inside the preview, enables bidirectional editor/preview scroll sync, and leaves framework and Tailwind detection on automatic. Explicit user or workspace settings still override these defaults. `vscode-markdown-footnote.preferMdxPreview` can disable dedicated MDX preview routing; Markdown Preview Enhanced is then used as the fallback when available.
+MDX is rendered through a safe virtual Markdown document and then handed to the same VS Code built-in preview stack. Moondancer strips module-only import/export syntax from the rendered view, resolves simple exported constants, rewrites relative file links against the real source file, inlines relative default imports of other `.mdx` files, preserves Markdown and ordinary HTML, and represents JSX components and unknown expressions without executing arbitrary JavaScript. This keeps the preview useful offline and avoids silently running component code just to read a document.
 
-The Markdown footnote parser remains scoped to Markdown documents rather than being blindly applied across JSX. MDX preview support here covers language activation, live preview routing, styling, links, math, diagrams, JSX/components, transclusion, and framework-aware rendering without claiming MDX footnotes are parsed by Moondancer.
+Imported React/TSX components are therefore shown as component containers rather than executed. Relative MDX transclusions are rendered recursively, with cycle detection. The original `.mdx` file remains the source of truth; the virtual Markdown document exists only to feed VS Code's built-in preview.
 
-For regression testing, `test/workspace/preview-kitchen-sink.mdx` covers frontmatter, ESM imports/exports, imported TSX components, MDX transclusion, expressions, Tailwind classes, math, tables, tasks, links and fragments, fenced TSX, Mermaid, and JSX/HTML details. `MdxCard.tsx` and `Transcluded.mdx` provide real local dependencies for trusted-mode smoke tests.
+The MDX regression fixture covers frontmatter, ESM imports/exports, component wrappers, MDX transclusion, expressions, math, tables/tasks, links and fragments, fenced TSX, Mermaid, Tailwind-style class attributes, and HTML-like JSX.
 
 ### TODO
 

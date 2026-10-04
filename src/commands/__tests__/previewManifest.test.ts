@@ -1,56 +1,47 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-describe('preview integration manifest', () => {
+describe('standalone Markdown and MDX preview manifest', () => {
   const packageJson = JSON.parse(
     fs.readFileSync(path.resolve(__dirname, '../../../package.json'), 'utf8'),
   );
 
-  it('ships the Markdown and MDX preview companions', () => {
-    expect(packageJson.extensionPack).toEqual(
+  it('does not require companion Marketplace extensions', () => {
+    expect(packageJson.extensionPack).toBeUndefined();
+    expect(packageJson.extensionDependencies).toBeUndefined();
+  });
+
+  it('registers MDX directly in Moondancer', () => {
+    expect(packageJson.activationEvents).toContain('onLanguage:mdx');
+    expect(packageJson.contributes.languages).toEqual(
       expect.arrayContaining([
-        'shd101wyy.markdown-preview-enhanced',
-        'bierner.markdown-preview-github-styles',
-        'unifiedjs.vscode-mdx',
-        'ggfincke.vsc-mdx-preview',
+        expect.objectContaining({
+          id: 'mdx',
+          extensions: ['.mdx'],
+        }),
+      ]),
+    );
+    expect(packageJson.contributes.grammars).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          language: 'mdx',
+          scopeName: 'text.html.markdown.mdx',
+        }),
       ]),
     );
   });
 
-  it('activates when either Markdown or MDX becomes active', () => {
-    expect(packageJson.activationEvents).toEqual(
-      expect.arrayContaining(['onLanguage:markdown', 'onLanguage:mdx']),
-    );
-  });
-
-  it('defaults both Markdown preview paths to dark GitHub styling', () => {
+  it('uses Moondancer styling with the VS Code built-in renderer', () => {
+    expect(packageJson.contributes['markdown.previewStyles']).toEqual([
+      './media/moondancer-preview.css',
+    ]);
     expect(packageJson.contributes.configurationDefaults).toMatchObject({
-      'markdown-preview-enhanced.previewTheme': 'github-dark.css',
-      'markdown-preview-enhanced.codeBlockTheme': 'github-dark.css',
-      'markdown-preview-github-styles.colorTheme': 'dark',
-      'markdown-preview-github-styles.darkTheme': 'dark',
+      'markdown.math.enabled': true,
+      'markdown.preview.frontMatter': 'table',
     });
   });
 
-  it('defaults MDX to dark, safe, synchronized preview behavior', () => {
-    expect(packageJson.contributes.configurationDefaults).toMatchObject({
-      'mdx-preview.preview.previewTheme': 'github-dark',
-      'mdx-preview.preview.codeBlockTheme': 'github-dark',
-      'mdx-preview.preview.autoTheme': false,
-      'mdx-preview.preview.security': 'strict',
-      'mdx-preview.preview.enableScripts': false,
-      'mdx-preview.preview.useWhiteBackground': false,
-      'mdx-preview.preview.openMdxLinksInPreview': true,
-      'mdx-preview.preview.scrollSync': 'bidirectional',
-      'mdx-preview.tailwind.enabled': 'auto',
-      'mdx-preview.framework': 'auto',
-    });
-  });
-
-  it('prefers dedicated MDX preview and keeps the integrated server browser enabled', () => {
-    const properties = packageJson.contributes.configuration.properties;
-    expect(properties['vscode-markdown-footnote.preferEnhancedPreview'].default).toBe(true);
-    expect(properties['vscode-markdown-footnote.preferMdxPreview'].default).toBe(true);
-    expect(properties['vscode-markdown-footnote.previewServerBrowser'].default).toBe('integrated');
+  it('requires the VS Code release with built-in Mermaid preview support', () => {
+    expect(packageJson.engines.vscode).toBe('^1.121.0');
   });
 });

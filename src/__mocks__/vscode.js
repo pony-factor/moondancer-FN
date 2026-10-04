@@ -5,10 +5,12 @@ const languages = {
 const StatusBarAlignment = {};
 
 const window = {
+  activeTextEditor: undefined,
   createStatusBarItem: jest.fn(() => ({
     show: jest.fn(),
   })),
   showErrorMessage: jest.fn(),
+  showInformationMessage: jest.fn(),
   showWarningMessage: jest.fn(),
   createTextEditorDecorationType: jest.fn(),
 };
@@ -19,13 +21,24 @@ const workspace = {
   onDidSaveTextDocument: jest.fn(),
 };
 
+const extensions = {
+  getExtension: jest.fn(),
+};
+
+const env = {
+  asExternalUri: jest.fn(async (uri) => uri),
+  openExternal: jest.fn(async () => true),
+};
+
 const OverviewRulerLane = {
   Left: null,
 };
 
 const Uri = {
   file: (f) => f,
-  parse: jest.fn(),
+  parse: jest.fn((value) => ({
+    toString: () => value,
+  })),
 };
 const Range = jest.fn();
 const Diagnostic = jest.fn();
@@ -45,6 +58,8 @@ const vscode = {
   StatusBarAlignment,
   window,
   workspace,
+  extensions,
+  env,
   OverviewRulerLane,
   Uri,
   Range,

@@ -43,11 +43,13 @@ Separate-file storage is opt-in and defaults to off, so existing Markdown docume
 
 ### Enhanced Markdown preview
 
-Moondancer includes [Markdown Preview Enhanced](https://github.com/shd101wyy/vscode-markdown-preview-enhanced) in its extension pack instead of vendoring or maintaining a fork. Its preview theme and code-block theme default to `github-dark.css`, while an explicit user or workspace Markdown Preview Enhanced theme still takes precedence.
+Moondancer includes [Markdown Preview Enhanced](https://github.com/shd101wyy/vscode-markdown-preview-enhanced) in its extension pack instead of vendoring or maintaining a fork. Its preview theme and code-block theme default to `github-dark.css`, while an explicit user or workspace Markdown Preview Enhanced theme still takes precedence. The built-in VS Code preview fallback also receives [Markdown Preview Github Styling](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-preview-github-styles), defaulted to its dark GitHub theme, so switching away from the enhanced renderer does not drop the GitHub-like presentation.
 
 `vscode-markdown-footnote.preferEnhancedPreview` defaults to `true`. The **Moondancer: Open Markdown Preview** and **Moondancer: Open Markdown Preview to the Side** commands route to Markdown Preview Enhanced when available and fall back to VS Code's built-in preview otherwise. Markdown Preview Enhanced's normal preview shortcuts remain available.
 
 **Moondancer: Start Preview Server** starts Markdown Preview Enhanced's Crossnote server. By default Moondancer waits for the configured Crossnote port and opens the localhost site inside VS Code's integrated Simple Browser. `vscode-markdown-footnote.previewServerBrowser` can instead use the external browser or start the server without opening a browser. The existing `markdown-preview-enhanced.crossnoteServePort` setting controls the port.
+
+For preview regression testing, `test/workspace/preview-kitchen-sink.md` intentionally exercises frontmatter, headings and fragment links, external and relative links, inline and block math, GitHub-style text formatting, task lists, tables, fenced code, Mermaid, images, raw HTML, details/summary, inline styles, and footnotes in one document.
 
 ### TODO
 

@@ -104,7 +104,9 @@
     "configurationDefaults": {
       "markdown-preview-enhanced.previewTheme": "github-dark.css",
       "markdown-preview-enhanced.codeBlockTheme": "github-dark.css",
-      "markdown-preview-enhanced.hideDefaultVSCodeMarkdownPreviewButtons": true
+      "markdown-preview-enhanced.hideDefaultVSCodeMarkdownPreviewButtons": true,
+      "markdown-preview-github-styles.colorTheme": "dark",
+      "markdown-preview-github-styles.darkTheme": "dark"
     }
   },
   "lint-staged": {
@@ -150,6 +152,7 @@
     "John Wooten <john.wooten@blocktransfer.com>"
   ],
   "extensionPack": [
-    "shd101wyy.markdown-preview-enhanced"
+    "shd101wyy.markdown-preview-enhanced",
+    "bierner.markdown-preview-github-styles"
   ]
 }

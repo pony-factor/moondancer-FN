@@ -1,9 +1,9 @@
 <p align="center" style="margin: 0">
-  <a href="https://github.com/JFWooten4/vscode-markdown-footnote"><img src="./assets/markdown-footnote.png" alt="VSCode Markdown Footnote" width="80" /></a>
+  <a href="https://github.com/pony-factor/moondancer-FN"><img src="./assets/markdown-footnote.png" alt="Moondancer FN" width="80" /></a>
 </p>
-<h1 align="center" style="margin-top: 0">VSCode Markdown Footnote</h1>
+<h1 align="center" style="margin-top: 0">Moondancer FN</h1>
 
-[![CI](https://github.com/JFWooten4/vscode-markdown-footnote/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/JFWooten4/vscode-markdown-footnote/actions/workflows/ci.yml)
+[![CI](https://github.com/pony-factor/moondancer-FN/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/pony-factor/moondancer-FN/actions/workflows/ci.yml)
 
 `[^1]` [footnote syntax](https://www.markdownguide.org/extended-syntax/#footnotes) support to VS Code's Markdown editor and preview.
 
@@ -54,8 +54,8 @@ Install:
 ### 1. Clone and install dependencies
 
 ```sh
-git clone https://github.com/JFWooten4/vscode-markdown-footnote.git
-cd vscode-markdown-footnote
+git clone https://github.com/pony-factor/moondancer-FN.git
+cd moondancer-FN
 npm install
 ```
 
@@ -113,7 +113,7 @@ No Marketplace publishing step is required.
 
 ## Contributing
 
-- File bugs and feature requests in [GitHub Issues](https://github.com/JFWooten4/vscode-markdown-footnote/issues).
+- File bugs and feature requests in [GitHub Issues](https://github.com/pony-factor/moondancer-FN/issues).
 
 ### Dev
 

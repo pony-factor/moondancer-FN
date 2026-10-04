@@ -11,7 +11,6 @@ import {
   openMarkdownPreview,
   openMarkdownPreviewToSide,
   openMoondancerSettings,
-  startPreviewServer,
 } from './commands/preview';
 // import FootnoteDeclarationProvider from './providers/FootnoteDeclarationProvider';
 
@@ -44,7 +43,6 @@ export function activate(context: vscode.ExtensionContext) {
       'vscode-markdown-footnote.openMarkdownPreviewToSide',
       openMarkdownPreviewToSide,
     ),
-    vscode.commands.registerCommand('vscode-markdown-footnote.startPreviewServer', startPreviewServer),
     vscode.commands.registerCommand('vscode-markdown-footnote.openSettings', openMoondancerSettings),
     vscode.languages.registerHoverProvider(mdLangSelector, new FootnoteHoverProvider()),
     vscode.languages.registerDocumentLinkProvider(mdLangSelector, new FootnoteLinkProvider()),

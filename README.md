@@ -41,13 +41,11 @@
 
 Separate-file storage is opt-in and defaults to off, so existing Markdown documents keep their current same-file behavior. VS Code's built-in Markdown preview only receives the source document text, so external definitions are not currently merged into preview rendering; editor navigation and the Footnotes side editor do resolve them.
 
-### Enhanced Markdown preview
+### Standalone Markdown preview
 
-Moondancer includes [Markdown Preview Enhanced](https://github.com/shd101wyy/vscode-markdown-preview-enhanced) in its extension pack instead of vendoring or maintaining a fork. Its preview theme and code-block theme default to `github-dark.css`, while an explicit user or workspace Markdown Preview Enhanced theme still takes precedence. The built-in VS Code preview fallback also receives [Markdown Preview Github Styling](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-preview-github-styles), defaulted to its dark GitHub theme, so switching away from the enhanced renderer does not drop the GitHub-like presentation.
+Moondancer does not require Markdown Preview Enhanced, Markdown Preview Github Styling, or any other Marketplace extension. Its preview commands use VS Code's built-in Markdown renderer directly, while Moondancer contributes its own dark GitHub-style stylesheet and footnote Markdown-it plugin.
 
-`vscode-markdown-footnote.preferEnhancedPreview` defaults to `true`. The **Moondancer: Open Markdown Preview** and **Moondancer: Open Markdown Preview to the Side** commands route to Markdown Preview Enhanced when available and fall back to VS Code's built-in preview otherwise. Markdown Preview Enhanced's normal preview shortcuts remain available.
-
-**Moondancer: Start Preview Server** starts Markdown Preview Enhanced's Crossnote server. By default Moondancer waits for the configured Crossnote port and opens the localhost site inside VS Code's integrated Simple Browser. `vscode-markdown-footnote.previewServerBrowser` can instead use the external browser or start the server without opening a browser. The existing `markdown-preview-enhanced.crossnoteServePort` setting controls the port.
+VS Code 1.121 or newer is required so the built-in preview supplies Mermaid rendering in addition to its existing KaTeX math, link and anchor handling, raw HTML support, preview security, and editor/preview synchronization. There is no Crossnote server or external browser dependency in Moondancer's Markdown preview path.
 
 For preview regression testing, `test/workspace/preview-kitchen-sink.md` intentionally exercises frontmatter, headings and fragment links, external and relative links, inline and block math, GitHub-style text formatting, task lists, tables, fenced code, Mermaid, images, raw HTML, details/summary, inline styles, and footnotes in one document.
 

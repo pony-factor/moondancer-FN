@@ -29,7 +29,7 @@
 
   ![Use command to insert a footnote](assets/command-to-insert.png)
 
-- Edit footnotes in a synchronized side editor. Run **Open Footnote Editor** to keep the current Markdown file's footnotes open beside your draft. Inserting a new footnote keeps the Markdown cursor at the reference and moves focus directly to the new footnote in the side editor. The side editor remembers its scroll/cursor position, and new definitions are placed beside the last footnote you were editing instead of always being appended to the end.
+- Edit footnotes in a synchronized side editor. Run **Open Footnote Editor** to keep the current Markdown file's footnotes open beside your draft. Inserting a new footnote keeps the Markdown cursor at the reference and moves focus directly to the new footnote in the side editor. The side editor remembers its scroll/cursor position, and new definitions are placed beside the last footnote you were editing instead of always being appended to the end. Multiline footnote content is supported, including indented continuation lines, as originally requested in [upstream PR #14](https://github.com/houkanshan/vscode-markdown-footnote/pull/14).
 
 - Render footnotes in the built-in markdown preview.
 
@@ -37,7 +37,6 @@
 
 ### TODO
 
-- Support multiline footnote content.
 - Support `pandoc-citeproc` format [citations](https://crsh.github.io/papaja_man/writing.html#citations)
 
 ## Build and use this fork locally

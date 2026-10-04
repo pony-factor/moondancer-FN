@@ -3,9 +3,12 @@ import * as vscode from 'vscode';
 
 const configSection = 'vscode-markdown-footnote';
 const enhancedPreviewExtensionId = 'shd101wyy.markdown-preview-enhanced';
+const modernMdxPreviewExtensionId = 'ggfincke.vsc-mdx-preview';
+const legacyMdxPreviewExtensionId = 'xyc.vscode-mdx-preview';
+const mdxPreviewCommand = 'mdx-preview.commands.openPreview';
 
-async function activateEnhancedPreview(): Promise<boolean> {
-  const extension = vscode.extensions.getExtension(enhancedPreviewExtensionId);
+async function activateExtension(extensionId: string): Promise<boolean> {
+  const extension = vscode.extensions.getExtension(extensionId);
   if (!extension) {
     return false;
   }
@@ -16,35 +19,114 @@ async function activateEnhancedPreview(): Promise<boolean> {
   return true;
 }
 
-async function openPreview(toSide: boolean): Promise<void> {
-  const editor = vscode.window.activeTextEditor;
-  if (!editor || editor.document.languageId !== 'markdown') {
-    return;
+async function activateFirstInstalledExtension(extensionIds: string[]): Promise<string | undefined> {
+  for (const extensionId of extensionIds) {
+    if (await activateExtension(extensionId)) {
+      return extensionId;
+    }
+  }
+  return undefined;
+}
+
+async function openEnhancedPreview(toSide: boolean): Promise<boolean> {
+  if (!(await activateExtension(enhancedPreviewExtensionId))) {
+    return false;
   }
 
+  await vscode.commands.executeCommand(
+    toSide
+      ? 'markdown-preview-enhanced.openPreviewToTheSide'
+      : 'markdown-preview-enhanced.openPreview',
+  );
+  return true;
+}
+
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
+async function openMarkdownDocumentPreview(
+  toSide: boolean,
+  resource: vscode.Uri,
+): Promise<void> {
   const preferEnhanced = vscode.workspace
-    .getConfiguration(configSection, editor.document.uri)
+    .getConfiguration(configSection, resource)
     .get<boolean>('preferEnhancedPreview', true);
 
   if (preferEnhanced) {
     try {
-      if (await activateEnhancedPreview()) {
-        await vscode.commands.executeCommand(
-          toSide
-            ? 'markdown-preview-enhanced.openPreviewToTheSide'
-            : 'markdown-preview-enhanced.openPreview',
-        );
+      if (await openEnhancedPreview(toSide)) {
         return;
       }
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
       vscode.window.showWarningMessage(
-        `Markdown Preview Enhanced could not open the preview (${message}); using VS Code's built-in preview instead.`,
+        `Markdown Preview Enhanced could not open the preview (${errorMessage(
+          error,
+        )}); using VS Code's built-in preview instead.`,
       );
     }
   }
 
   await vscode.commands.executeCommand(toSide ? 'markdown.showPreviewToSide' : 'markdown.showPreview');
+}
+
+async function openMdxDocumentPreview(toSide: boolean, resource: vscode.Uri): Promise<void> {
+  const configuration = vscode.workspace.getConfiguration(configSection, resource);
+  const preferMdxPreview = configuration.get<boolean>('preferMdxPreview', true);
+
+  if (preferMdxPreview) {
+    try {
+      const activated = await activateFirstInstalledExtension([
+        modernMdxPreviewExtensionId,
+        legacyMdxPreviewExtensionId,
+      ]);
+      if (activated) {
+        await vscode.commands.executeCommand(mdxPreviewCommand);
+        return;
+      }
+    } catch (error) {
+      vscode.window.showWarningMessage(
+        `MDX Preview could not open the preview (${errorMessage(
+          error,
+        )}); trying Markdown Preview Enhanced instead.`,
+      );
+    }
+  }
+
+  const preferEnhanced = configuration.get<boolean>('preferEnhancedPreview', true);
+  if (preferEnhanced) {
+    try {
+      if (await openEnhancedPreview(toSide)) {
+        return;
+      }
+    } catch (error) {
+      vscode.window.showWarningMessage(
+        `Markdown Preview Enhanced could not open the MDX fallback (${errorMessage(error)}).`,
+      );
+    }
+  }
+
+  vscode.window.showWarningMessage(
+    'No MDX preview provider is available. Install Modern MDX Preview or enable Markdown Preview Enhanced as the fallback.',
+  );
+}
+
+async function openPreview(toSide: boolean): Promise<void> {
+  const editor = vscode.window.activeTextEditor;
+  if (!editor) {
+    return;
+  }
+
+  if (editor.document.languageId === 'mdx') {
+    await openMdxDocumentPreview(toSide, editor.document.uri);
+    return;
+  }
+
+  if (editor.document.languageId !== 'markdown') {
+    return;
+  }
+
+  await openMarkdownDocumentPreview(toSide, editor.document.uri);
 }
 
 export async function openMarkdownPreview(): Promise<void> {
@@ -109,7 +191,7 @@ async function openServerUri(uri: vscode.Uri, browser: string): Promise<void> {
 }
 
 export async function startPreviewServer(): Promise<void> {
-  if (!(await activateEnhancedPreview())) {
+  if (!(await activateExtension(enhancedPreviewExtensionId))) {
     vscode.window.showWarningMessage(
       'Markdown Preview Enhanced is not installed. Install it to use the Crossnote preview server.',
     );

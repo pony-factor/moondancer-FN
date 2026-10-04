@@ -51,6 +51,16 @@ Moondancer includes [Markdown Preview Enhanced](https://github.com/shd101wyy/vsc
 
 For preview regression testing, `test/workspace/preview-kitchen-sink.md` intentionally exercises frontmatter, headings and fragment links, external and relative links, inline and block math, GitHub-style text formatting, task lists, tables, fenced code, Mermaid, images, raw HTML, details/summary, inline styles, and footnotes in one document.
 
+### MDX preview
+
+Moondancer treats MDX as its own preview path instead of pretending JSX is plain Markdown. Opening an `.mdx` document activates the MDX language path and routes **Moondancer: Open Preview** through [Modern MDX Preview](https://marketplace.visualstudio.com/items?itemName=ggfincke.vsc-mdx-preview), with [MDX](https://marketplace.visualstudio.com/items?itemName=unifiedjs.vscode-mdx) installed for language support. If the older Xiaoyi `xyc.vscode-mdx-preview` extension is already installed, Moondancer recognizes it as a compatibility fallback without installing both preview implementations together.
+
+MDX preview defaults to `github-dark` for the document and code themes, keeps automatic light-theme switching off, leaves scripts disabled under strict security, keeps MDX/Markdown links inside the preview, enables bidirectional editor/preview scroll sync, and leaves framework and Tailwind detection on automatic. Explicit user or workspace settings still override these defaults. `vscode-markdown-footnote.preferMdxPreview` can disable dedicated MDX preview routing; Markdown Preview Enhanced is then used as the fallback when available.
+
+The Markdown footnote parser remains scoped to Markdown documents rather than being blindly applied across JSX. MDX preview support here covers language activation, live preview routing, styling, links, math, diagrams, JSX/components, transclusion, and framework-aware rendering without claiming MDX footnotes are parsed by Moondancer.
+
+For regression testing, `test/workspace/preview-kitchen-sink.mdx` covers frontmatter, ESM imports/exports, imported TSX components, MDX transclusion, expressions, Tailwind classes, math, tables, tasks, links and fragments, fenced TSX, Mermaid, and JSX/HTML details. `MdxCard.tsx` and `Transcluded.mdx` provide real local dependencies for trusted-mode smoke tests.
+
 ### TODO
 
 - Support `pandoc-citeproc` format [citations](https://crsh.github.io/papaja_man/writing.html#citations)

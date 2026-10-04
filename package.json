@@ -20,6 +20,7 @@
   "keywords": [
     "moondancer",
     "markdown",
+    "mdx",
     "footnote",
     "footnotes",
     "preview",
@@ -31,6 +32,7 @@
   ],
   "activationEvents": [
     "onLanguage:markdown",
+    "onLanguage:mdx",
     "onCommand:vscode-markdown-footnote.openFootnoteEditor",
     "onCommand:vscode-markdown-footnote.openMarkdownPreview",
     "onCommand:vscode-markdown-footnote.openMarkdownPreviewToSide",
@@ -50,11 +52,11 @@
       },
       {
         "command": "vscode-markdown-footnote.openMarkdownPreview",
-        "title": "Moondancer: Open Markdown Preview"
+        "title": "Moondancer: Open Preview"
       },
       {
         "command": "vscode-markdown-footnote.openMarkdownPreviewToSide",
-        "title": "Moondancer: Open Markdown Preview to the Side"
+        "title": "Moondancer: Open Preview to the Side"
       },
       {
         "command": "vscode-markdown-footnote.startPreviewServer",
@@ -82,7 +84,7 @@
         "vscode-markdown-footnote.preferEnhancedPreview": {
           "type": "boolean",
           "default": true,
-          "description": "Use Markdown Preview Enhanced for Moondancer preview commands when it is available; otherwise use VS Code's built-in Markdown preview."
+          "description": "Use Markdown Preview Enhanced for Markdown preview commands and as the MDX fallback when a dedicated MDX preview is unavailable."
         },
         "vscode-markdown-footnote.previewServerBrowser": {
           "type": "string",
@@ -98,6 +100,11 @@
             "Start the Crossnote preview server without opening a browser."
           ],
           "description": "Where Moondancer opens the Markdown Preview Enhanced Crossnote server after starting it."
+        },
+        "vscode-markdown-footnote.preferMdxPreview": {
+          "type": "boolean",
+          "default": true,
+          "description": "Use a dedicated MDX preview for MDX documents when available, preferring Modern MDX Preview and recognizing the legacy Xiaoyi MDX Preview as a compatibility fallback."
         }
       }
     },
@@ -106,7 +113,18 @@
       "markdown-preview-enhanced.codeBlockTheme": "github-dark.css",
       "markdown-preview-enhanced.hideDefaultVSCodeMarkdownPreviewButtons": true,
       "markdown-preview-github-styles.colorTheme": "dark",
-      "markdown-preview-github-styles.darkTheme": "dark"
+      "markdown-preview-github-styles.darkTheme": "dark",
+      "mdx-preview.preview.previewTheme": "github-dark",
+      "mdx-preview.preview.codeBlockTheme": "github-dark",
+      "mdx-preview.preview.autoTheme": false,
+      "mdx-preview.preview.security": "strict",
+      "mdx-preview.preview.enableScripts": false,
+      "mdx-preview.preview.useVscodeMarkdownStyles": true,
+      "mdx-preview.preview.useWhiteBackground": false,
+      "mdx-preview.preview.openMdxLinksInPreview": true,
+      "mdx-preview.preview.scrollSync": "bidirectional",
+      "mdx-preview.tailwind.enabled": "auto",
+      "mdx-preview.framework": "auto"
     }
   },
   "lint-staged": {
@@ -153,6 +171,8 @@
   ],
   "extensionPack": [
     "shd101wyy.markdown-preview-enhanced",
-    "bierner.markdown-preview-github-styles"
+    "bierner.markdown-preview-github-styles",
+    "unifiedjs.vscode-mdx",
+    "ggfincke.vsc-mdx-preview"
   ]
 }

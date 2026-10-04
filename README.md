@@ -31,9 +31,15 @@
 
 - Edit footnotes in a synchronized side editor. Run **Open Footnote Editor** to keep the current Markdown file's footnotes open beside your draft. Inserting a new footnote keeps the Markdown cursor at the reference and moves focus directly to the new footnote in the side editor. The side editor remembers its scroll/cursor position, and new definitions are placed beside the last footnote you were editing instead of always being appended to the end. Multiline footnote content is supported, including indented continuation lines, as originally requested in [upstream PR #14](https://github.com/houkanshan/vscode-markdown-footnote/pull/14).
 
+- Optionally store footnote definitions in a separate sibling file. Enable `vscode-markdown-footnote.separateFootnoteFile` to keep references such as `[^1]` in the source document while definitions are read from and written to `footnotes.md`. The definition file is created automatically when a footnote is first inserted. `vscode-markdown-footnote.footnoteFileName` can change the file name. Hover, go-to-definition, reference lookup, clickable links, and the synchronized side editor follow the definitions across files.
+
 - Render footnotes in the built-in markdown preview.
 
   ![Preview](assets/preview.png)
+
+### Separate footnote file
+
+Separate-file storage is opt-in and defaults to off, so existing Markdown documents keep their current same-file behavior. VS Code's built-in Markdown preview only receives the source document text, so external definitions are not currently merged into preview rendering; editor navigation and the Footnotes side editor do resolve them.
 
 ### TODO
 

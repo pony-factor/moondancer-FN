@@ -45,7 +45,22 @@
         "title": "Open Footnote Editor"
       }
     ],
-    "markdown.markdownItPlugins": true
+    "markdown.markdownItPlugins": true,
+    "configuration": {
+      "title": "Moondancer FN",
+      "properties": {
+        "vscode-markdown-footnote.separateFootnoteFile": {
+          "type": "boolean",
+          "default": false,
+          "description": "Store footnote definitions in a separate Markdown file beside the source document instead of in the source document itself."
+        },
+        "vscode-markdown-footnote.footnoteFileName": {
+          "type": "string",
+          "default": "footnotes.md",
+          "description": "File name used for footnote definitions when separate footnote storage is enabled."
+        }
+      }
+    }
   },
   "lint-staged": {
     "*.ts": [

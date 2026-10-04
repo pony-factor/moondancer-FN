@@ -1,14 +1,14 @@
 import * as vscode from 'vscode';
 import { buildPeekCommandUri } from '../commands/peek';
 import { footnoteRefRegex, footnoteContentRegex, buildFootnoteContentRegex } from '../utils';
-import { resolveFootnoteDocument } from '../utils/footnoteStorage';
+import createRangeFromFootnoteMatch from '../utils/createRangeFromFootnoteMatch';
 
 // Provide hover tips:
 // - on a footnote ref showing the footnote content and a link for peek definition
 // - on a footnote content showing a link for peek references
 export default class FootnoteHoverProvider implements vscode.HoverProvider {
-  public async provideHover(document: vscode.TextDocument, position: vscode.Position) {
-    const footnoteRefHover = await this.footnoteRefHoverProvider(document, position);
+  public provideHover(document: vscode.TextDocument, position: vscode.Position) {
+    const footnoteRefHover = this.footnoteRefHoverProvider(document, position);
     if (footnoteRefHover) {
       return footnoteRefHover;
     }
@@ -21,10 +21,7 @@ export default class FootnoteHoverProvider implements vscode.HoverProvider {
     return null;
   }
 
-  private async footnoteRefHoverProvider(
-    document: vscode.TextDocument,
-    position: vscode.Position,
-  ) {
+  private footnoteRefHoverProvider(document: vscode.TextDocument, position: vscode.Position) {
     const range = document.getWordRangeAtPosition(position, footnoteRefRegex);
     if (!range) {
       return null;
@@ -32,13 +29,9 @@ export default class FootnoteHoverProvider implements vscode.HoverProvider {
 
     const footnoteRefText = document.getText(range);
     const footnoteName = footnoteRefText.slice(2, footnoteRefText.length - 1);
-    const definitionDocument = await resolveFootnoteDocument(document);
-    if (!definitionDocument) {
-      return null;
-    }
 
     const contentRegex = buildFootnoteContentRegex(footnoteName);
-    const match = definitionDocument.getText().match(contentRegex);
+    const match = document.getText().match(contentRegex);
 
     if (!match) {
       return null;
@@ -51,10 +44,7 @@ export default class FootnoteHoverProvider implements vscode.HoverProvider {
     return new vscode.Hover(wrapMarkdownString(content), range);
   }
 
-  private footnoteContentHoverProvider(
-    document: vscode.TextDocument,
-    position: vscode.Position,
-  ) {
+  private footnoteContentHoverProvider(document: vscode.TextDocument, position: vscode.Position) {
     const range = document.getWordRangeAtPosition(position, footnoteContentRegex);
     if (!range) {
       return null;

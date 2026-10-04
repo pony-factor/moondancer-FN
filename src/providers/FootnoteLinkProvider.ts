@@ -1,17 +1,7 @@
 import * as vscode from 'vscode';
 import createRangeFromFootnoteMatch from '../utils/createRangeFromFootnoteMatch';
 import createUriForRange from '../utils/createUriForRange';
-import {
-  buildFootnoteRefRegex,
-  footnoteContentRegex,
-  footnoteRefRegex,
-  matchAll,
-} from '../utils';
-import {
-  findSourceDocumentsForFootnoteFile,
-  isFootnoteFile,
-  resolveFootnoteDocument,
-} from '../utils/footnoteStorage';
+import createRefContentPairs from '../utils/createRefContentPairs';
 
 const previewLength = 18;
 function getRefPreviewText(document: vscode.TextDocument, refRange: vscode.Range) {
@@ -28,40 +18,37 @@ function getRefPreviewText(document: vscode.TextDocument, refRange: vscode.Range
 }
 
 export default class FootnoteLinkProvider implements vscode.DocumentLinkProvider {
-  public async provideDocumentLinks(document: vscode.TextDocument): Promise<vscode.DocumentLink[]> {
-    if (isFootnoteFile(document)) {
-      return this.provideDefinitionLinks(document);
-    }
-
+  public provideDocumentLinks(document: vscode.TextDocument): vscode.DocumentLink[] {
     const results: vscode.DocumentLink[] = [];
-    const refMatches = matchAll(footnoteRefRegex, document.getText());
-    const definitionDocument = await resolveFootnoteDocument(document);
-    const contentMatches = definitionDocument
-      ? matchAll(footnoteContentRegex, definitionDocument.getText())
-      : [];
-    const contentMatchesMap = new Map<string, RegExpMatchArray>();
 
-    for (const contentMatch of contentMatches) {
-      const key = contentMatch.groups!.key;
-      if (!contentMatchesMap.has(key)) {
-        contentMatchesMap.set(key, contentMatch);
-      }
-    }
+    // Scan document, create pairs of ref and content
+    const refContentPairs = createRefContentPairs(document);
 
-    for (const refMatch of refMatches) {
+    // Iterator pairs, create documentLink for jumping or insertion
+    for (let [refMatch, contentMatch] of refContentPairs) {
       const refRange = createRangeFromFootnoteMatch(document, refMatch);
-      const footnoteName = refMatch.groups!.key;
-      const contentMatch = contentMatchesMap.get(footnoteName);
 
-      if (contentMatch && definitionDocument) {
-        const contentRange = createRangeFromFootnoteMatch(definitionDocument, contentMatch);
+      if (contentMatch) {
+        // Link of ref -> content
+        const contentRange = createRangeFromFootnoteMatch(document, contentMatch);
         const refLink = new vscode.DocumentLink(
           refRange,
-          createUriForRange(definitionDocument, contentRange),
+          createUriForRange(document, contentRange),
         );
         refLink.tooltip = 'Go to';
         results.push(refLink);
+
+        // Link of content -> ref
+        // NOTE: there could be multiple links to difference ref on one content.
+        const contentLink = new vscode.DocumentLink(
+          contentRange,
+          createUriForRange(document, refRange),
+        );
+        contentLink.tooltip = getRefPreviewText(document, refRange);
+        results.push(contentLink);
       } else {
+        // No match, a click will insert a new foot note.
+        const footnoteName = refMatch.groups!.key;
         const refLink = new vscode.DocumentLink(
           refRange,
           vscode.Uri.parse(
@@ -72,34 +59,6 @@ export default class FootnoteLinkProvider implements vscode.DocumentLinkProvider
         );
         refLink.tooltip = 'Create footnote';
         results.push(refLink);
-      }
-    }
-
-    return results;
-  }
-
-  private async provideDefinitionLinks(
-    document: vscode.TextDocument,
-  ): Promise<vscode.DocumentLink[]> {
-    const results: vscode.DocumentLink[] = [];
-    const contentMatches = matchAll(footnoteContentRegex, document.getText());
-    const sourceDocuments = await findSourceDocumentsForFootnoteFile(document);
-
-    for (const contentMatch of contentMatches) {
-      const contentRange = createRangeFromFootnoteMatch(document, contentMatch);
-      const footnoteName = contentMatch.groups!.key;
-
-      for (const sourceDocument of sourceDocuments) {
-        const refMatches = matchAll(buildFootnoteRefRegex(footnoteName), sourceDocument.getText());
-        for (const refMatch of refMatches) {
-          const refRange = createRangeFromFootnoteMatch(sourceDocument, refMatch);
-          const contentLink = new vscode.DocumentLink(
-            contentRange,
-            createUriForRange(sourceDocument, refRange),
-          );
-          contentLink.tooltip = getRefPreviewText(sourceDocument, refRange);
-          results.push(contentLink);
-        }
       }
     }
 

@@ -4,11 +4,6 @@ import {
   parseFootnoteDefinitions,
   serializeFootnoteContent,
 } from './utils/footnoteDefinitions';
-import {
-  getFootnoteDocumentUri,
-  isFootnoteFile,
-  resolveFootnoteDocument,
-} from './utils/footnoteStorage';
 
 type UpdateFootnoteMessage = {
   type: 'updateFootnote';
@@ -30,7 +25,6 @@ type WebviewMessage = UpdateFootnoteMessage | ReadyMessage | FocusFootnoteMessag
 export default class FootnoteEditor implements vscode.Disposable {
   private panel: vscode.WebviewPanel | undefined;
   private sourceUri: vscode.Uri | undefined;
-  private definitionUri: vscode.Uri | undefined;
   private webviewReady = false;
   private pendingFocusName: string | undefined;
   private applyingWebviewEdit = false;
@@ -44,48 +38,33 @@ export default class FootnoteEditor implements vscode.Disposable {
         if (
           this.applyingWebviewEdit ||
           !this.panel ||
-          !this.definitionUri ||
-          event.document.uri.toString() !== this.definitionUri.toString()
+          !this.sourceUri ||
+          event.document.uri.toString() !== this.sourceUri.toString()
         ) {
           return;
         }
-        void this.syncFromSourceUri();
+        void this.sync(event.document);
       }),
       vscode.window.onDidChangeActiveTextEditor((editor) => {
-        if (
-          !this.panel ||
-          !editor ||
-          editor.document.languageId !== 'markdown' ||
-          isFootnoteFile(editor.document)
-        ) {
+        if (!this.panel || !editor || editor.document.languageId !== 'markdown') {
           return;
         }
-        void this.setSourceDocument(editor.document);
-      }),
-      vscode.workspace.onDidChangeConfiguration((event) => {
-        if (!this.panel || !this.sourceUri) {
-          return;
-        }
-        if (
-          event.affectsConfiguration('vscode-markdown-footnote.separateFootnoteFile') ||
-          event.affectsConfiguration('vscode-markdown-footnote.footnoteFileName')
-        ) {
-          void this.syncFromSourceUri();
-        }
+        this.sourceUri = editor.document.uri;
+        void this.sync(editor.document);
       }),
     );
   }
 
   async open(document: vscode.TextDocument, focusName?: string) {
-    if (document.languageId !== 'markdown' || isFootnoteFile(document)) {
+    if (document.languageId !== 'markdown') {
       return;
     }
 
+    this.sourceUri = document.uri;
     this.pendingFocusName = focusName;
     if (focusName) {
       this.lastFocusedFootnoteByDocument.set(document.uri.toString(), focusName);
     }
-    await this.setSourceDocument(document, false);
     this.ensurePanel();
     this.panel!.reveal(vscode.ViewColumn.Beside, false);
 
@@ -94,44 +73,29 @@ export default class FootnoteEditor implements vscode.Disposable {
     }
   }
 
-  getDefinitionInsertionPosition(
-    sourceDocument: vscode.TextDocument,
-    definitionDocument: vscode.TextDocument,
-  ): vscode.Position | undefined {
-    const footnoteName = this.lastFocusedFootnoteByDocument.get(sourceDocument.uri.toString());
+  getDefinitionInsertionPosition(document: vscode.TextDocument): vscode.Position | undefined {
+    const footnoteName = this.lastFocusedFootnoteByDocument.get(document.uri.toString());
     if (!footnoteName) {
       return undefined;
     }
 
-    const definitionEndOffset = getFootnoteDefinitionEndOffset(
-      definitionDocument.getText(),
-      footnoteName,
-    );
+    const definitionEndOffset = getFootnoteDefinitionEndOffset(document.getText(), footnoteName);
     if (definitionEndOffset === undefined) {
       return undefined;
     }
 
-    const definitionEndLine = definitionDocument.positionAt(definitionEndOffset).line;
-    if (definitionEndLine + 1 < definitionDocument.lineCount) {
+    const definitionEndLine = document.positionAt(definitionEndOffset).line;
+    if (definitionEndLine + 1 < document.lineCount) {
       return new vscode.Position(definitionEndLine + 1, 0);
     }
 
-    return definitionDocument.lineAt(definitionEndLine).range.end;
+    return document.lineAt(definitionEndLine).range.end;
   }
 
   dispose() {
     this.panel?.dispose();
     for (const disposable of this.disposables) {
       disposable.dispose();
-    }
-  }
-
-  private async setSourceDocument(document: vscode.TextDocument, sync = true) {
-    this.sourceUri = document.uri;
-    const definitionDocument = await resolveFootnoteDocument(document);
-    this.definitionUri = definitionDocument?.uri || getFootnoteDocumentUri(document);
-    if (sync && this.webviewReady) {
-      await this.sync(document);
     }
   }
 
@@ -160,7 +124,6 @@ export default class FootnoteEditor implements vscode.Disposable {
       () => {
         this.panel = undefined;
         this.sourceUri = undefined;
-        this.definitionUri = undefined;
         this.webviewReady = false;
         this.pendingFocusName = undefined;
       },
@@ -172,7 +135,10 @@ export default class FootnoteEditor implements vscode.Disposable {
   private async handleMessage(message: WebviewMessage) {
     if (message.type === 'ready') {
       this.webviewReady = true;
-      await this.syncFromSourceUri();
+      if (this.sourceUri) {
+        const document = await vscode.workspace.openTextDocument(this.sourceUri);
+        await this.sync(document);
+      }
       return;
     }
 
@@ -183,7 +149,7 @@ export default class FootnoteEditor implements vscode.Disposable {
       return;
     }
 
-    if (message.type !== 'updateFootnote' || !this.definitionUri) {
+    if (message.type !== 'updateFootnote' || !this.sourceUri) {
       return;
     }
 
@@ -195,23 +161,14 @@ export default class FootnoteEditor implements vscode.Disposable {
   }
 
   private async applyFootnoteUpdate(message: UpdateFootnoteMessage) {
-    if (!this.definitionUri) {
+    if (!this.sourceUri) {
       return;
     }
 
-    let document: vscode.TextDocument;
-    try {
-      document = await vscode.workspace.openTextDocument(this.definitionUri);
-    } catch (error) {
-      await this.syncFromSourceUri();
-      return;
-    }
-
-    const definition = parseFootnoteDefinitions(document.getText()).find(
-      ({ name }) => name === message.name,
-    );
+    const document = await vscode.workspace.openTextDocument(this.sourceUri);
+    const definition = parseFootnoteDefinitions(document.getText()).find(({ name }) => name === message.name);
     if (!definition) {
-      await this.syncFromSourceUri();
+      await this.sync(document);
       return;
     }
 
@@ -230,20 +187,11 @@ export default class FootnoteEditor implements vscode.Disposable {
     try {
       const applied = await vscode.workspace.applyEdit(edit);
       if (!applied) {
-        await this.syncFromSourceUri();
+        await this.sync(document);
       }
     } finally {
       this.applyingWebviewEdit = false;
     }
-  }
-
-  private async syncFromSourceUri() {
-    if (!this.sourceUri) {
-      return;
-    }
-    const sourceDocument = await vscode.workspace.openTextDocument(this.sourceUri);
-    await this.setSourceDocument(sourceDocument, false);
-    await this.sync(sourceDocument);
   }
 
   private async sync(document: vscode.TextDocument) {
@@ -255,20 +203,13 @@ export default class FootnoteEditor implements vscode.Disposable {
       return;
     }
 
-    const definitionDocument = await resolveFootnoteDocument(document);
-    this.definitionUri = definitionDocument?.uri || getFootnoteDocumentUri(document);
     const focusName = this.pendingFocusName;
     this.pendingFocusName = undefined;
     await this.panel.webview.postMessage({
       type: 'setFootnotes',
       documentKey: document.uri.toString(),
       fileName: document.fileName.split(/[\\/]/).pop() || document.fileName,
-      footnotes: definitionDocument
-        ? parseFootnoteDefinitions(definitionDocument.getText()).map(({ name, content }) => ({
-            name,
-            content,
-          }))
-        : [],
+      footnotes: parseFootnoteDefinitions(document.getText()).map(({ name, content }) => ({ name, content })),
       focusName,
     });
   }

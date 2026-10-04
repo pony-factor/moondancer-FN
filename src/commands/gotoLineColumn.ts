@@ -1,19 +1,10 @@
 import * as vscode from 'vscode';
 import { Position } from 'vscode';
 
-export type GotoLineColumnArgs = { line: number; column: number; uri?: string };
+export type GotoLineColumnArgs = { line: number; column: number };
 
-export default async function gotoLineColumn(arg: GotoLineColumnArgs) {
-  let editor = vscode.window.activeTextEditor;
-
-  if (arg.uri && (!editor || editor.document.uri.toString() !== arg.uri)) {
-    const document = await vscode.workspace.openTextDocument(vscode.Uri.parse(arg.uri));
-    editor = await vscode.window.showTextDocument(document, {
-      preview: false,
-      preserveFocus: false,
-    });
-  }
-
+export default function gotoLineColumn(arg: GotoLineColumnArgs) {
+  const editor = vscode.window.activeTextEditor;
   if (editor) {
     internalGotoLineColumn(editor, arg);
   }

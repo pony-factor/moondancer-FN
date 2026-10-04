@@ -1,8 +1,8 @@
 {
-  "name": "moondancer-fn",
-  "displayName": "Moondancer FN",
-  "publisher": "pony-factor",
-  "description": "Support Markdown footnotes in VS Code",
+  "name": "vscode-markdown-footnote",
+  "displayName": "Markdown Footnote",
+  "publisher": "JFWooten4",
+  "description": "Support markdown footnote in VSCode editor",
   "version": "1.0.0",
   "engines": {
     "vscode": "^1.57.0"
@@ -11,14 +11,13 @@
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
-    "url": "https://github.com/pony-factor/moondancer-FN.git"
+    "url": "https://github.com/JFWooten4/vscode-markdown-footnote.git"
   },
   "bugs": {
-    "url": "https://github.com/pony-factor/moondancer-FN/issues"
+    "url": "https://github.com/JFWooten4/vscode-markdown-footnote/issues"
   },
   "icon": "assets/markdown-footnote.png",
   "keywords": [
-    "moondancer",
     "markdown",
     "footnote",
     "footnotes",
@@ -45,22 +44,7 @@
         "title": "Open Footnote Editor"
       }
     ],
-    "markdown.markdownItPlugins": true,
-    "configuration": {
-      "title": "Moondancer FN",
-      "properties": {
-        "vscode-markdown-footnote.separateFootnoteFile": {
-          "type": "boolean",
-          "default": false,
-          "description": "Store footnote definitions in a separate Markdown file beside the source document instead of in the source document itself."
-        },
-        "vscode-markdown-footnote.footnoteFileName": {
-          "type": "string",
-          "default": "footnotes.md",
-          "description": "File name used for footnote definitions when separate footnote storage is enabled."
-        }
-      }
-    }
+    "markdown.markdownItPlugins": true
   },
   "lint-staged": {
     "*.ts": [
@@ -100,7 +84,7 @@
   "dependencies": {
     "markdown-it-footnote": "^3.0.3"
   },
-  "homepage": "https://github.com/pony-factor/moondancer-FN#readme",
+  "homepage": "https://github.com/JFWooten4/vscode-markdown-footnote#readme",
   "contributors": [
     "John Wooten <john.wooten@blocktransfer.com>"
   ]

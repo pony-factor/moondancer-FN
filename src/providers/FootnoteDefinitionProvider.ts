@@ -2,14 +2,9 @@ import vscode from 'vscode';
 
 import { footnoteRefRegex, buildFootnoteContentRegex } from '../utils';
 import createRangeFromFootnoteMatch from '../utils/createRangeFromFootnoteMatch';
-import { resolveFootnoteDocument } from '../utils/footnoteStorage';
 
 export default class FootnoteDefinitionProvider implements vscode.DefinitionProvider {
-  async provideDefinition(
-    document: vscode.TextDocument,
-    position: vscode.Position,
-    token: vscode.CancellationToken,
-  ): Promise<vscode.Definition | vscode.LocationLink[] | null> {
+  provideDefinition(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken): vscode.ProviderResult<vscode.Definition | vscode.LocationLink[]> {
     const range = document.getWordRangeAtPosition(position, footnoteRefRegex);
     if (!range) {
       return null;
@@ -17,20 +12,14 @@ export default class FootnoteDefinitionProvider implements vscode.DefinitionProv
 
     const footnoteRefText = document.getText(range);
     const footnoteName = footnoteRefText.slice(2, footnoteRefText.length - 1);
-    const definitionDocument = await resolveFootnoteDocument(document);
-    if (!definitionDocument) {
-      return null;
-    }
 
     const contentRegex = buildFootnoteContentRegex(footnoteName);
-    const match = definitionDocument.getText().match(contentRegex);
+    const match = document.getText().match(contentRegex);
+
     if (!match) {
       return null;
     }
 
-    return new vscode.Location(
-      definitionDocument.uri,
-      createRangeFromFootnoteMatch(definitionDocument, match),
-    );
+    return new vscode.Location(document.uri, createRangeFromFootnoteMatch(document, match));
   }
 }

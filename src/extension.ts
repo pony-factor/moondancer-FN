@@ -7,6 +7,12 @@ import FootnoteReferenceProvider from './providers/FootnoteReferenceProvider';
 import FootnoteDefinitionProvider from './providers/FootnoteDefinitionProvider';
 import FootnoteEditor from './FootnoteEditor';
 import peek from './commands/peek';
+import {
+  openMarkdownPreview,
+  openMarkdownPreviewToSide,
+  openMoondancerSettings,
+  startPreviewServer,
+} from './commands/preview';
 // import FootnoteDeclarationProvider from './providers/FootnoteDeclarationProvider';
 
 const mdLangSelector = { language: 'markdown' };
@@ -33,6 +39,13 @@ export function activate(context: vscode.ExtensionContext) {
       }
       await footnoteEditor.open(editor.document);
     }),
+    vscode.commands.registerCommand('vscode-markdown-footnote.openMarkdownPreview', openMarkdownPreview),
+    vscode.commands.registerCommand(
+      'vscode-markdown-footnote.openMarkdownPreviewToSide',
+      openMarkdownPreviewToSide,
+    ),
+    vscode.commands.registerCommand('vscode-markdown-footnote.startPreviewServer', startPreviewServer),
+    vscode.commands.registerCommand('vscode-markdown-footnote.openSettings', openMoondancerSettings),
     vscode.languages.registerHoverProvider(mdLangSelector, new FootnoteHoverProvider()),
     vscode.languages.registerDocumentLinkProvider(mdLangSelector, new FootnoteLinkProvider()),
     vscode.languages.registerDefinitionProvider(mdLangSelector, new FootnoteDefinitionProvider()),

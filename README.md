@@ -41,6 +41,14 @@
 
 Separate-file storage is opt-in and defaults to off, so existing Markdown documents keep their current same-file behavior. VS Code's built-in Markdown preview only receives the source document text, so external definitions are not currently merged into preview rendering; editor navigation and the Footnotes side editor do resolve them.
 
+### Enhanced Markdown preview
+
+Moondancer includes [Markdown Preview Enhanced](https://github.com/shd101wyy/vscode-markdown-preview-enhanced) in its extension pack instead of vendoring or maintaining a fork. Its preview theme and code-block theme default to `github-dark.css`, while an explicit user or workspace Markdown Preview Enhanced theme still takes precedence.
+
+`vscode-markdown-footnote.preferEnhancedPreview` defaults to `true`. The **Moondancer: Open Markdown Preview** and **Moondancer: Open Markdown Preview to the Side** commands route to Markdown Preview Enhanced when available and fall back to VS Code's built-in preview otherwise. Markdown Preview Enhanced's normal preview shortcuts remain available.
+
+**Moondancer: Start Preview Server** starts Markdown Preview Enhanced's Crossnote server. By default Moondancer waits for the configured Crossnote port and opens the localhost site inside VS Code's integrated Simple Browser. `vscode-markdown-footnote.previewServerBrowser` can instead use the external browser or start the server without opening a browser. The existing `markdown-preview-enhanced.crossnoteServePort` setting controls the port.
+
 ### TODO
 
 - Support `pandoc-citeproc` format [citations](https://crsh.github.io/papaja_man/writing.html#citations)

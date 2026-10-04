@@ -31,7 +31,11 @@
   ],
   "activationEvents": [
     "onLanguage:markdown",
-    "onCommand:vscode-markdown-footnote.openFootnoteEditor"
+    "onCommand:vscode-markdown-footnote.openFootnoteEditor",
+    "onCommand:vscode-markdown-footnote.openMarkdownPreview",
+    "onCommand:vscode-markdown-footnote.openMarkdownPreviewToSide",
+    "onCommand:vscode-markdown-footnote.startPreviewServer",
+    "onCommand:vscode-markdown-footnote.openSettings"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -43,6 +47,22 @@
       {
         "command": "vscode-markdown-footnote.openFootnoteEditor",
         "title": "Open Footnote Editor"
+      },
+      {
+        "command": "vscode-markdown-footnote.openMarkdownPreview",
+        "title": "Moondancer: Open Markdown Preview"
+      },
+      {
+        "command": "vscode-markdown-footnote.openMarkdownPreviewToSide",
+        "title": "Moondancer: Open Markdown Preview to the Side"
+      },
+      {
+        "command": "vscode-markdown-footnote.startPreviewServer",
+        "title": "Moondancer: Start Preview Server"
+      },
+      {
+        "command": "vscode-markdown-footnote.openSettings",
+        "title": "Moondancer: Open Settings"
       }
     ],
     "markdown.markdownItPlugins": true,
@@ -58,8 +78,33 @@
           "type": "string",
           "default": "footnotes.md",
           "description": "File name used for footnote definitions when separate footnote storage is enabled."
+        },
+        "vscode-markdown-footnote.preferEnhancedPreview": {
+          "type": "boolean",
+          "default": true,
+          "description": "Use Markdown Preview Enhanced for Moondancer preview commands when it is available; otherwise use VS Code's built-in Markdown preview."
+        },
+        "vscode-markdown-footnote.previewServerBrowser": {
+          "type": "string",
+          "default": "integrated",
+          "enum": [
+            "integrated",
+            "external",
+            "none"
+          ],
+          "enumDescriptions": [
+            "Open the Crossnote preview server in VS Code's integrated Simple Browser.",
+            "Open the Crossnote preview server in the system browser.",
+            "Start the Crossnote preview server without opening a browser."
+          ],
+          "description": "Where Moondancer opens the Markdown Preview Enhanced Crossnote server after starting it."
         }
       }
+    },
+    "configurationDefaults": {
+      "markdown-preview-enhanced.previewTheme": "github-dark.css",
+      "markdown-preview-enhanced.codeBlockTheme": "github-dark.css",
+      "markdown-preview-enhanced.hideDefaultVSCodeMarkdownPreviewButtons": true
     }
   },
   "lint-staged": {
@@ -103,5 +148,8 @@
   "homepage": "https://github.com/pony-factor/moondancer-FN#readme",
   "contributors": [
     "John Wooten <john.wooten@blocktransfer.com>"
+  ],
+  "extensionPack": [
+    "shd101wyy.markdown-preview-enhanced"
   ]
 }

@@ -1,9 +1,9 @@
 <p align="center" style="margin: 0">
-  <a href="https://github.com/JFWooten4/vscode-markdown-footnote"><img src="./assets/markdown-footnote.png" alt="VSCode Markdown Footnote" width="80" /></a>
+  <a href="https://github.com/pony-factor/moondancer-FN"><img src="./assets/markdown-footnote.png" alt="Moondancer FN" width="80" /></a>
 </p>
-<h1 align="center" style="margin-top: 0">VSCode Markdown Footnote</h1>
+<h1 align="center" style="margin-top: 0">Moondancer FN</h1>
 
-[![CI](https://github.com/JFWooten4/vscode-markdown-footnote/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/JFWooten4/vscode-markdown-footnote/actions/workflows/ci.yml)
+[![CI](https://github.com/pony-factor/moondancer-FN/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/pony-factor/moondancer-FN/actions/workflows/ci.yml)
 
 `[^1]` [footnote syntax](https://www.markdownguide.org/extended-syntax/#footnotes) support to VS Code's Markdown editor and preview.
 
@@ -31,9 +31,15 @@
 
 - Edit footnotes in a synchronized side editor. Run **Open Footnote Editor** to keep the current Markdown file's footnotes open beside your draft. Inserting a new footnote keeps the Markdown cursor at the reference and moves focus directly to the new footnote in the side editor. The side editor remembers its scroll/cursor position, and new definitions are placed beside the last footnote you were editing instead of always being appended to the end. Multiline footnote content is supported, including indented continuation lines, as originally requested in [upstream PR #14](https://github.com/houkanshan/vscode-markdown-footnote/pull/14).
 
+- Optionally store footnote definitions in a separate sibling file. Enable `vscode-markdown-footnote.separateFootnoteFile` to keep references such as `[^1]` in the source document while definitions are read from and written to `footnotes.md`. The definition file is created automatically when a footnote is first inserted. `vscode-markdown-footnote.footnoteFileName` can change the file name. Hover, go-to-definition, reference lookup, clickable links, and the synchronized side editor follow the definitions across files.
+
 - Render footnotes in the built-in markdown preview.
 
   ![Preview](assets/preview.png)
+
+### Separate footnote file
+
+Separate-file storage is opt-in and defaults to off, so existing Markdown documents keep their current same-file behavior. VS Code's built-in Markdown preview only receives the source document text, so external definitions are not currently merged into preview rendering; editor navigation and the Footnotes side editor do resolve them.
 
 ### TODO
 
@@ -54,8 +60,8 @@ Install:
 ### 1. Clone and install dependencies
 
 ```sh
-git clone https://github.com/JFWooten4/vscode-markdown-footnote.git
-cd vscode-markdown-footnote
+git clone https://github.com/pony-factor/moondancer-FN.git
+cd moondancer-FN
 npm install
 ```
 
@@ -113,7 +119,7 @@ No Marketplace publishing step is required.
 
 ## Contributing
 
-- File bugs and feature requests in [GitHub Issues](https://github.com/JFWooten4/vscode-markdown-footnote/issues).
+- File bugs and feature requests in [GitHub Issues](https://github.com/pony-factor/moondancer-FN/issues).
 
 ### Dev
 

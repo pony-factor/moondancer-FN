@@ -22,7 +22,8 @@ export function activate(context: vscode.ExtensionContext) {
       insertFootnote(
         args,
         (document, footnoteName) => footnoteEditor.open(document, footnoteName),
-        (document) => footnoteEditor.getDefinitionInsertionPosition(document),
+        (sourceDocument, definitionDocument) =>
+          footnoteEditor.getDefinitionInsertionPosition(sourceDocument, definitionDocument),
       ),
     ),
     vscode.commands.registerCommand('vscode-markdown-footnote.openFootnoteEditor', async () => {

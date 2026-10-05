@@ -1,9 +1,13 @@
 import * as vscode from 'vscode';
 import { footnoteRefRegex, matchAll } from '../utils';
+import { resolveFootnoteDocument } from '../utils/footnoteStorage';
 
 type InsertFootnoteArgs = { footnoteName?: string };
 type OpenFootnoteEditor = (document: vscode.TextDocument, footnoteName: string) => Thenable<void>;
-type GetDefinitionInsertionPosition = (document: vscode.TextDocument) => vscode.Position | undefined;
+type GetDefinitionInsertionPosition = (
+  sourceDocument: vscode.TextDocument,
+  definitionDocument: vscode.TextDocument,
+) => vscode.Position | undefined;
 
 export default async function insertFootnote(
   { footnoteName }: InsertFootnoteArgs = {},
@@ -15,11 +19,12 @@ export default async function insertFootnote(
     return;
   }
 
+  const sourceDocument = editor.document;
   const insertionPosition = editor.selection.start;
   const shouldInsertFootnoteRef = !footnoteName;
 
   if (shouldInsertFootnoteRef) {
-    const refMatches = matchAll(footnoteRefRegex, editor.document.getText());
+    const refMatches = matchAll(footnoteRefRegex, sourceDocument.getText());
     const input = await vscode.window.showInputBox({
       prompt: 'Footnote name (no space or tab)',
       placeHolder: 'Footnote name',
@@ -49,14 +54,22 @@ export default async function insertFootnote(
     referenceCursor = insertionPosition.translate(0, reference.length);
   }
 
-  const text = editor.document.getText();
-  const eol = editor.document.eol === vscode.EndOfLine.CRLF ? '\r\n' : '\n';
-  const preferredPosition = getDefinitionInsertionPosition?.(editor.document);
-  let definitionPosition = preferredPosition || editor.document.positionAt(text.length);
+  const definitionDocument = await resolveFootnoteDocument(sourceDocument, true);
+  if (!definitionDocument) {
+    return;
+  }
+
+  const text = definitionDocument.getText();
+  const eol = definitionDocument.eol === vscode.EndOfLine.CRLF ? '\r\n' : '\n';
+  const preferredPosition = getDefinitionInsertionPosition?.(
+    sourceDocument,
+    definitionDocument,
+  );
+  const definitionPosition = preferredPosition || definitionDocument.positionAt(text.length);
   let definitionText: string;
 
   if (preferredPosition) {
-    const preferredOffset = editor.document.offsetAt(preferredPosition);
+    const preferredOffset = definitionDocument.offsetAt(preferredPosition);
     if (preferredOffset === text.length) {
       const prefix = text.length === 0 || text.endsWith('\n') ? '' : eol;
       definitionText = `${prefix}[^${footnoteName}]: `;
@@ -68,10 +81,18 @@ export default async function insertFootnote(
     definitionText = `${emptyLinesAbove}[^${footnoteName}]: `;
   }
 
-  const insertedDefinition = await editor.edit(
-    (edit) => edit.insert(definitionPosition, definitionText),
-    { undoStopBefore: false, undoStopAfter: true },
-  );
+  let insertedDefinition: boolean;
+  if (definitionDocument.uri.toString() === sourceDocument.uri.toString()) {
+    insertedDefinition = await editor.edit(
+      (edit) => edit.insert(definitionPosition, definitionText),
+      { undoStopBefore: false, undoStopAfter: true },
+    );
+  } else {
+    const edit = new vscode.WorkspaceEdit();
+    edit.insert(definitionDocument.uri, definitionPosition, definitionText);
+    insertedDefinition = await vscode.workspace.applyEdit(edit);
+  }
+
   if (!insertedDefinition) {
     return;
   }
@@ -81,6 +102,6 @@ export default async function insertFootnote(
   }
 
   if (openFootnoteEditor) {
-    await openFootnoteEditor(editor.document, footnoteName);
+    await openFootnoteEditor(sourceDocument, footnoteName);
   }
 }

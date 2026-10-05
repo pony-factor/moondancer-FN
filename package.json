@@ -20,6 +20,7 @@
   "keywords": [
     "moondancer",
     "markdown",
+    "mdx",
     "footnote",
     "footnotes",
     "preview",
@@ -31,6 +32,7 @@
   ],
   "activationEvents": [
     "onLanguage:markdown",
+    "onLanguage:mdx",
     "onCommand:vscode-markdown-footnote.openFootnoteEditor",
     "onCommand:vscode-markdown-footnote.openMarkdownPreview",
     "onCommand:vscode-markdown-footnote.openMarkdownPreviewToSide",
@@ -49,11 +51,11 @@
       },
       {
         "command": "vscode-markdown-footnote.openMarkdownPreview",
-        "title": "Moondancer: Open Markdown Preview"
+        "title": "Moondancer: Open Preview"
       },
       {
         "command": "vscode-markdown-footnote.openMarkdownPreviewToSide",
-        "title": "Moondancer: Open Markdown Preview to the Side"
+        "title": "Moondancer: Open Preview to the Side"
       },
       {
         "command": "vscode-markdown-footnote.openSettings",
@@ -82,6 +84,26 @@
     },
     "markdown.previewStyles": [
       "./media/moondancer-preview.css"
+    ],
+    "languages": [
+      {
+        "id": "mdx",
+        "aliases": [
+          "MDX",
+          "Markdown JSX"
+        ],
+        "extensions": [
+          ".mdx"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "mdx",
+        "scopeName": "text.html.markdown.mdx",
+        "path": "./syntaxes/mdx.tmLanguage.json"
+      }
     ]
   },
   "lint-staged": {

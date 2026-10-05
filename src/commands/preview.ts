@@ -1,20 +1,37 @@
 import * as vscode from 'vscode';
 
-async function openPreview(toSide: boolean): Promise<void> {
+export interface MdxPreviewOpener {
+  open(sourceUri: vscode.Uri, toSide: boolean): Promise<void>;
+}
+
+async function openPreview(toSide: boolean, mdxPreview?: MdxPreviewOpener): Promise<void> {
   const editor = vscode.window.activeTextEditor;
-  if (!editor || editor.document.languageId !== 'markdown') {
+  if (!editor) {
+    return;
+  }
+
+  if (editor.document.languageId === 'mdx') {
+    if (!mdxPreview) {
+      vscode.window.showWarningMessage('Moondancer MDX preview is not available.');
+      return;
+    }
+    await mdxPreview.open(editor.document.uri, toSide);
+    return;
+  }
+
+  if (editor.document.languageId !== 'markdown') {
     return;
   }
 
   await vscode.commands.executeCommand(toSide ? 'markdown.showPreviewToSide' : 'markdown.showPreview');
 }
 
-export async function openMarkdownPreview(): Promise<void> {
-  await openPreview(false);
+export async function openMarkdownPreview(mdxPreview?: MdxPreviewOpener): Promise<void> {
+  await openPreview(false, mdxPreview);
 }
 
-export async function openMarkdownPreviewToSide(): Promise<void> {
-  await openPreview(true);
+export async function openMarkdownPreviewToSide(mdxPreview?: MdxPreviewOpener): Promise<void> {
+  await openPreview(true, mdxPreview);
 }
 
 export async function openMoondancerSettings(): Promise<void> {

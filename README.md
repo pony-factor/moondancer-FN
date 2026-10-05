@@ -49,6 +49,16 @@ VS Code 1.121 or newer is required so the built-in preview supplies Mermaid rend
 
 For preview regression testing, `test/workspace/preview-kitchen-sink.md` intentionally exercises frontmatter, headings and fragment links, external and relative links, inline and block math, GitHub-style text formatting, task lists, tables, fenced code, Mermaid, images, raw HTML, details/summary, inline styles, and footnotes in one document.
 
+### Standalone MDX preview
+
+Moondancer also owns the MDX path directly. It registers the `.mdx` language and grammar itself and does not install or query a separate MDX language or preview extension.
+
+MDX is rendered through a safe virtual Markdown document and then handed to the same VS Code built-in preview stack. Moondancer strips module-only import/export syntax from the rendered view, resolves simple exported constants, rewrites relative file links against the real source file, inlines relative default imports of other `.mdx` files, preserves Markdown and ordinary HTML, and represents JSX components and unknown expressions without executing arbitrary JavaScript. This keeps the preview useful offline and avoids silently running component code just to read a document.
+
+Imported React/TSX components are therefore shown as component containers rather than executed. Relative MDX transclusions are rendered recursively, with cycle detection. The original `.mdx` file remains the source of truth; the virtual Markdown document exists only to feed VS Code's built-in preview.
+
+The MDX regression fixture covers frontmatter, ESM imports/exports, component wrappers, MDX transclusion, expressions, math, tables/tasks, links and fragments, fenced TSX, Mermaid, Tailwind-style class attributes, and HTML-like JSX.
+
 ### TODO
 
 - Support `pandoc-citeproc` format [citations](https://crsh.github.io/papaja_man/writing.html#citations)

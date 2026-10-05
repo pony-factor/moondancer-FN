@@ -7,6 +7,7 @@ import FootnoteReferenceProvider from './providers/FootnoteReferenceProvider';
 import FootnoteDefinitionProvider from './providers/FootnoteDefinitionProvider';
 import FootnoteEditor from './FootnoteEditor';
 import peek from './commands/peek';
+import MdxPreviewProvider, { MDX_PREVIEW_SCHEME } from './mdx/MdxPreviewProvider';
 import {
   openMarkdownPreview,
   openMarkdownPreviewToSide,
@@ -18,9 +19,12 @@ const mdLangSelector = { language: 'markdown' };
 
 export function activate(context: vscode.ExtensionContext) {
   const footnoteEditor = new FootnoteEditor();
+  const mdxPreview = new MdxPreviewProvider();
 
   context.subscriptions.push(
     footnoteEditor,
+    mdxPreview,
+    vscode.workspace.registerTextDocumentContentProvider(MDX_PREVIEW_SCHEME, mdxPreview),
     vscode.commands.registerCommand('_vscode-markdown-footnote.gotoLineColumn', gotoLineColumn),
     vscode.commands.registerCommand('_vscode-markdown-footnote.peek', peek),
     vscode.commands.registerCommand('vscode-markdown-footnote.insertFootnote', (args) =>
@@ -38,10 +42,12 @@ export function activate(context: vscode.ExtensionContext) {
       }
       await footnoteEditor.open(editor.document);
     }),
-    vscode.commands.registerCommand('vscode-markdown-footnote.openMarkdownPreview', openMarkdownPreview),
+    vscode.commands.registerCommand('vscode-markdown-footnote.openMarkdownPreview', () =>
+      openMarkdownPreview(mdxPreview),
+    ),
     vscode.commands.registerCommand(
       'vscode-markdown-footnote.openMarkdownPreviewToSide',
-      openMarkdownPreviewToSide,
+      () => openMarkdownPreviewToSide(mdxPreview),
     ),
     vscode.commands.registerCommand('vscode-markdown-footnote.openSettings', openMoondancerSettings),
     vscode.languages.registerHoverProvider(mdLangSelector, new FootnoteHoverProvider()),

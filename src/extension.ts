@@ -7,6 +7,8 @@ import FootnoteReferenceProvider from './providers/FootnoteReferenceProvider';
 import FootnoteDefinitionProvider from './providers/FootnoteDefinitionProvider';
 import FootnoteEditor from './FootnoteEditor';
 import peek from './commands/peek';
+import spellcheckSelection, { SPELLCHECK_SELECTION_COMMAND } from './commands/spellcheckSelection';
+import SpellcheckCodeActionProvider from './providers/SpellcheckCodeActionProvider';
 // import FootnoteDeclarationProvider from './providers/FootnoteDeclarationProvider';
 
 const mdLangSelector = { language: 'markdown' };
@@ -26,6 +28,7 @@ export function activate(context: vscode.ExtensionContext) {
           footnoteEditor.getDefinitionInsertionPosition(sourceDocument, definitionDocument),
       ),
     ),
+    vscode.commands.registerCommand(SPELLCHECK_SELECTION_COMMAND, spellcheckSelection),
     vscode.commands.registerCommand('vscode-markdown-footnote.openFootnoteEditor', async () => {
       const editor = vscode.window.activeTextEditor;
       if (!editor || editor.document.languageId !== 'markdown') {
@@ -37,6 +40,9 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.languages.registerDocumentLinkProvider(mdLangSelector, new FootnoteLinkProvider()),
     vscode.languages.registerDefinitionProvider(mdLangSelector, new FootnoteDefinitionProvider()),
     vscode.languages.registerReferenceProvider(mdLangSelector, new FootnoteReferenceProvider()),
+    vscode.languages.registerCodeActionsProvider(mdLangSelector, new SpellcheckCodeActionProvider(), {
+      providedCodeActionKinds: SpellcheckCodeActionProvider.providedCodeActionKinds,
+    }),
 
     // NOTE: Not sure what's the difference between declaration and definition.
     // vscode.languages.registerDeclarationProvider(mdLangSelector, new FootnoteDeclarationProvider()),

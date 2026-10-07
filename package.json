@@ -31,7 +31,8 @@
   ],
   "activationEvents": [
     "onLanguage:markdown",
-    "onCommand:vscode-markdown-footnote.openFootnoteEditor"
+    "onCommand:vscode-markdown-footnote.openFootnoteEditor",
+    "onCommand:vscode-markdown-footnote.quickInsertFootnote"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -43,6 +44,10 @@
       {
         "command": "vscode-markdown-footnote.openFootnoteEditor",
         "title": "Open Footnote Editor"
+      },
+      {
+        "command": "vscode-markdown-footnote.quickInsertFootnote",
+        "title": "Quick Insert Footnote"
       }
     ],
     "markdown.markdownItPlugins": true,
@@ -60,7 +65,15 @@
           "description": "File name used for footnote definitions when separate footnote storage is enabled."
         }
       }
-    }
+    },
+    "keybindings": [
+      {
+        "command": "vscode-markdown-footnote.quickInsertFootnote",
+        "key": "ctrl+shift+6",
+        "mac": "cmd+shift+6",
+        "when": "editorTextFocus && editorLangId == markdown"
+      }
+    ]
   },
   "lint-staged": {
     "*.ts": [

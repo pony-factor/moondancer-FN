@@ -25,6 +25,8 @@
 
 - Command for inserting new footnote
 
+- Quickly scaffold a numbered footnote from the caret with <kbd>cmd</kbd> + <kbd>shift</kbd> + <kbd>6</kbd> on macOS or <kbd>ctrl</kbd> + <kbd>shift</kbd> + <kbd>6</kbd> elsewhere. Moondancer inserts the next available `[^n]` reference, appends the matching `[^n]: ` definition, and moves the cursor to the definition so you can type immediately.
+
   ![Click to create a new footnote](assets/click-to-create.png)
 
   ![Use command to insert a footnote](assets/command-to-insert.png)

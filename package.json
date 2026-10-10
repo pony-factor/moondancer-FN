@@ -32,6 +32,7 @@
   "activationEvents": [
     "onLanguage:markdown",
     "onCommand:vscode-markdown-footnote.openFootnoteEditor",
+    "onCommand:vscode-markdown-footnote.spellcheckSelection",
     "onCommand:vscode-markdown-footnote.quickInsertFootnote"
   ],
   "main": "./out/extension.js",
@@ -44,6 +45,10 @@
       {
         "command": "vscode-markdown-footnote.openFootnoteEditor",
         "title": "Open Footnote Editor"
+      },
+      {
+        "command": "vscode-markdown-footnote.spellcheckSelection",
+        "title": "Spellcheck Selection with Spellcheck Only"
       },
       {
         "command": "vscode-markdown-footnote.quickInsertFootnote",
@@ -63,6 +68,11 @@
           "type": "string",
           "default": "footnotes.md",
           "description": "File name used for footnote definitions when separate footnote storage is enabled."
+        },
+        "vscode-markdown-footnote.spellcheckPluginName": {
+          "type": "string",
+          "default": "Spellcheck Only",
+          "description": "Installed ChatGPT plugin name used by the Markdown spellcheck code action."
         }
       }
     },

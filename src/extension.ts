@@ -7,6 +7,7 @@ import FootnoteReferenceProvider from './providers/FootnoteReferenceProvider';
 import FootnoteDefinitionProvider from './providers/FootnoteDefinitionProvider';
 import FootnoteEditor from './FootnoteEditor';
 import peek from './commands/peek';
+import quickInsertFootnote from './commands/quickInsertFootnote';
 import spellcheckSelection, { SPELLCHECK_SELECTION_COMMAND } from './commands/spellcheckSelection';
 import SpellcheckCodeActionProvider from './providers/SpellcheckCodeActionProvider';
 // import FootnoteDeclarationProvider from './providers/FootnoteDeclarationProvider';
@@ -20,6 +21,7 @@ export function activate(context: vscode.ExtensionContext) {
     footnoteEditor,
     vscode.commands.registerCommand('_vscode-markdown-footnote.gotoLineColumn', gotoLineColumn),
     vscode.commands.registerCommand('_vscode-markdown-footnote.peek', peek),
+    vscode.commands.registerCommand('vscode-markdown-footnote.quickInsertFootnote', quickInsertFootnote),
     vscode.commands.registerCommand('vscode-markdown-footnote.insertFootnote', (args) =>
       insertFootnote(
         args,

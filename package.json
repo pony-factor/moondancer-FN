@@ -32,7 +32,8 @@
   "activationEvents": [
     "onLanguage:markdown",
     "onCommand:vscode-markdown-footnote.openFootnoteEditor",
-    "onCommand:vscode-markdown-footnote.spellcheckSelection"
+    "onCommand:vscode-markdown-footnote.spellcheckSelection",
+    "onCommand:vscode-markdown-footnote.quickInsertFootnote"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -48,6 +49,10 @@
       {
         "command": "vscode-markdown-footnote.spellcheckSelection",
         "title": "Spellcheck Selection with Spellcheck Only"
+      },
+      {
+        "command": "vscode-markdown-footnote.quickInsertFootnote",
+        "title": "Quick Insert Footnote"
       }
     ],
     "markdown.markdownItPlugins": true,
@@ -70,7 +75,15 @@
           "description": "Installed ChatGPT plugin name used by the Markdown spellcheck code action."
         }
       }
-    }
+    },
+    "keybindings": [
+      {
+        "command": "vscode-markdown-footnote.quickInsertFootnote",
+        "key": "ctrl+shift+6",
+        "mac": "cmd+shift+6",
+        "when": "editorTextFocus && editorLangId == markdown"
+      }
+    ]
   },
   "lint-staged": {
     "*.ts": [

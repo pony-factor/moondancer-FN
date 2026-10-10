@@ -33,6 +33,8 @@
 
 - Optionally store footnote definitions in a separate sibling file. Enable `vscode-markdown-footnote.separateFootnoteFile` to keep references such as `[^1]` in the source document while definitions are read from and written to `footnotes.md`. The definition file is created automatically when a footnote is first inserted. `vscode-markdown-footnote.footnoteFileName` can change the file name. Hover, go-to-definition, reference lookup, clickable links, and the synchronized side editor follow the definitions across files.
 
+- Spellcheck highlighted Markdown from VS Code's lightbulb / Quick Fix menu. **Spellcheck selection with Spellcheck Only** opens ChatGPT with the selected text addressed to the installed `@Spellcheck Only` plugin. The plugin name can be changed with `vscode-markdown-footnote.spellcheckPluginName`.
+
 - Render footnotes in the built-in markdown preview.
 
   ![Preview](assets/preview.png)

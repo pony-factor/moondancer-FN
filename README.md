@@ -1,11 +1,13 @@
 <p align="center" style="margin: 0">
-  <a href="https://github.com/pony-factor/moondancer-FN"><img src="./assets/markdown-footnote.png" alt="Moondancer FN" width="80" /></a>
+  <a href="https://github.com/pony-factor/moondancer-FN"><img src="./assets/moondancer-icon.png" alt="Moon Dancer cutie mark: purple crescent and three pink stars" width="80" /></a>
 </p>
 <h1 align="center" style="margin-top: 0">Moondancer FN</h1>
 
 [![CI](https://github.com/pony-factor/moondancer-FN/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/pony-factor/moondancer-FN/actions/workflows/ci.yml)
 
 `[^1]` [footnote syntax](https://www.markdownguide.org/extended-syntax/#footnotes) support to VS Code's Markdown editor and preview.
+
+The extension icon and README emblem use Moon Dancer's purple-crescent-and-three-pink-stars cutie mark. The editable vector artwork is in [`assets/moondancer-cutie-mark.svg`](./assets/moondancer-cutie-mark.svg).
 
 
 > This repository is a maintained fork of [houkanshan/vscode-markdown-footnote](https://github.com/houkanshan/vscode-markdown-footnote) by Mai Hou. The upstream work was distributed under the MIT License; its original copyright and permission notice are retained in [`LICENSE-base`](./LICENSE-base). This fork and its modifications are distributed under the GNU Affero General Public License version 3 or, at your option, any later version; see [`LICENSE`](./LICENSE).

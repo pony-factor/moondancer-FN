@@ -37,6 +37,8 @@
 
 - Spellcheck highlighted Markdown from VS Code's lightbulb / Quick Fix menu. **Spellcheck selection with Spellcheck Only** opens ChatGPT with the selected text addressed to the installed `@Spellcheck Only` plugin. The plugin name can be changed with `vscode-markdown-footnote.spellcheckPluginName`.
 
+- Optionally make **Enter exit closing punctuation** in Markdown. Enable `vscode-markdown-footnote.skipClosingPunctuationOnEnter` (off by default) to move the caret past an immediately following `)`, `]`, or `}` instead of inserting a newline. If no closer follows the caret, Enter keeps its normal behavior. Suggestions, snippet editing, and rename prompts retain their original Enter handling. With multiple cursors, all cursors must precede a closing delimiter to skip; otherwise Enter inserts a newline normally.
+
 - Render footnotes in the built-in markdown preview.
 
   ![Preview](assets/preview.png)

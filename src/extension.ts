@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { registerPdfViewer } from './PdfViewer';
 import insertFootnote from './commands/insertFootnote';
 import gotoLineColumn from './commands/gotoLineColumn';
 import FootnoteLinkProvider from './providers/FootnoteLinkProvider';
@@ -16,6 +17,7 @@ const mdLangSelector = { language: 'markdown' };
 
 export function activate(context: vscode.ExtensionContext) {
   const footnoteEditor = new FootnoteEditor();
+  registerPdfViewer(context);
 
   context.subscriptions.push(
     footnoteEditor,

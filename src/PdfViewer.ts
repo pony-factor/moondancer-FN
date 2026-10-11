@@ -15,7 +15,7 @@ function viewerCheckout(): string | undefined {
     path.join(os.homedir(), 'PDF-magic', 'viewer'),
     path.join(os.homedir(), 'Developer', 'PDF-magic', 'viewer'),
   ];
-  return candidates.map(candidate => path.resolve(candidate.replace(/^~(?=\\/|$)/, os.homedir())))
+  return candidates.map(candidate => path.resolve(candidate.replace(/^~(?=\/|$)/, os.homedir())))
     .find(candidate => fs.existsSync(path.join(candidate, 'dist', 'viewer.html'))
       && fs.existsSync(path.join(candidate, 'dist', 'pdf.worker.min.mjs')));
 }
@@ -60,13 +60,13 @@ async function readRemotePdf(uri: vscode.Uri): Promise<Uint8Array> {
 
 function makeHtml(webview: vscode.Webview, dist: vscode.Uri, originalUrl: string): string {
   const raw = fs.readFileSync(vscode.Uri.joinPath(dist, 'viewer.html').fsPath, 'utf8');
-  const rootUri = webview.asWebviewUri(dist).toString().replace(/\\/$/, '') + '/';
+  const rootUri = webview.asWebviewUri(dist).toString().replace(/\/$/, '') + '/';
   const localResource = (item: string) => {
     if (/^(?:https?:|data:|#|mailto:)/i.test(item)) return item;
     if (item.startsWith('/') || item.includes('..')) return '#';
     return webview.asWebviewUri(vscode.Uri.joinPath(dist, item)).toString();
   };
-  const rewritten = raw.replace(/(\\b(?:src|href)=")([^"]+)(")/g, (_match, prefix, item, suffix) =>
+  const rewritten = raw.replace(/(\b(?:src|href)=")([^"]+)(")/g, (_match, prefix, item, suffix) =>
     prefix + escapeHtml(localResource(item)) + suffix);
   const bootstrap = `<script>
     (() => {
@@ -158,7 +158,7 @@ export function registerPdfViewer(context: vscode.ExtensionContext): void {
     const url = await vscode.window.showInputBox({
       title: 'Open PDF-magic viewer',
       prompt: 'HTTPS URL of a PDF document',
-      validateInput: value => /^https?:\\/\\//i.test(value) ? undefined : 'Enter an HTTP or HTTPS URL',
+      validateInput: value => /^https?:\/\//i.test(value) ? undefined : 'Enter an HTTP or HTTPS URL',
     });
     if (!url) return;
     const uri = vscode.Uri.parse(url);

@@ -33,7 +33,9 @@
     "onLanguage:markdown",
     "onCommand:vscode-markdown-footnote.openFootnoteEditor",
     "onCommand:vscode-markdown-footnote.spellcheckSelection",
-    "onCommand:vscode-markdown-footnote.quickInsertFootnote"
+    "onCommand:vscode-markdown-footnote.quickInsertFootnote",
+    "onCustomEditor:moondancer.pdfViewer",
+    "onCommand:moondancer.openWebPdf"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -53,6 +55,10 @@
       {
         "command": "vscode-markdown-footnote.quickInsertFootnote",
         "title": "Quick Insert Footnote"
+      },
+      {
+        "command": "moondancer.openWebPdf",
+        "title": "Open Web PDF with PDF-magic"
       }
     ],
     "markdown.markdownItPlugins": true,
@@ -73,6 +79,11 @@
           "type": "string",
           "default": "Spellcheck Only",
           "description": "Installed ChatGPT plugin name used by the Markdown spellcheck code action."
+        },
+        "moondancer.pdfViewerCheckout": {
+          "type": "string",
+          "default": "",
+          "description": "Path to a local PDF-magic/viewer checkout with a built dist/ directory. When empty, Moondancer searches nearby workspace and home directories."
         }
       }
     },
@@ -82,6 +93,18 @@
         "key": "ctrl+shift+6",
         "mac": "cmd+shift+6",
         "when": "editorTextFocus && editorLangId == markdown"
+      }
+    ],
+    "customEditors": [
+      {
+        "viewType": "moondancer.pdfViewer",
+        "displayName": "PDF-magic Viewer",
+        "selector": [
+          {
+            "filenamePattern": "*.pdf"
+          }
+        ],
+        "priority": "default"
       }
     ]
   },

@@ -33,7 +33,8 @@
     "onLanguage:markdown",
     "onCommand:vscode-markdown-footnote.openFootnoteEditor",
     "onCommand:vscode-markdown-footnote.spellcheckSelection",
-    "onCommand:vscode-markdown-footnote.quickInsertFootnote"
+    "onCommand:vscode-markdown-footnote.quickInsertFootnote",
+    "onCommand:vscode-markdown-footnote.blockquoteSelection"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -53,6 +54,10 @@
       {
         "command": "vscode-markdown-footnote.quickInsertFootnote",
         "title": "Quick Insert Footnote"
+      },
+      {
+        "command": "vscode-markdown-footnote.blockquoteSelection",
+        "title": "Blockquote Selection"
       }
     ],
     "markdown.markdownItPlugins": true,
@@ -73,6 +78,11 @@
           "type": "string",
           "default": "Spellcheck Only",
           "description": "Installed ChatGPT plugin name used by the Markdown spellcheck code action."
+        },
+        "vscode-markdown-footnote.blockquoteSelectionShortcut": {
+          "type": "boolean",
+          "default": true,
+          "description": "Use Cmd+. (macOS) or Ctrl+. (Windows/Linux) to blockquote selected Markdown lines. Turn this off to preserve the normal shortcut behavior."
         }
       }
     },
@@ -82,6 +92,12 @@
         "key": "ctrl+shift+6",
         "mac": "cmd+shift+6",
         "when": "editorTextFocus && editorLangId == markdown"
+      },
+      {
+        "command": "vscode-markdown-footnote.blockquoteSelection",
+        "key": "ctrl+.",
+        "mac": "cmd+.",
+        "when": "editorTextFocus && !editorReadonly && editorLangId == markdown && editorHasSelection && config.vscode-markdown-footnote.blockquoteSelectionShortcut"
       }
     ]
   },

@@ -1,5 +1,5 @@
 <p align="center" style="margin: 0">
-  <a href="https://github.com/pony-factor/moondancer-FN"><img src="./assets/markdown-footnote.png" alt="Moondancer FN" width="80" /></a>
+  <a href="https://github.com/pony-factor/moondancer-FN"><img src="./assets/moondancer-icon.png" alt="Moon Dancer cutie mark: purple crescent and three pink stars" width="80" /></a>
 </p>
 <h1 align="center" style="margin-top: 0">Moondancer FN</h1>
 
@@ -7,8 +7,42 @@
 
 `[^1]` [footnote syntax](https://www.markdownguide.org/extended-syntax/#footnotes) support to VS Code's Markdown editor and preview.
 
+The extension icon and README emblem use Moon Dancer's purple-crescent-and-three-pink-stars cutie mark. The editable vector artwork is in [`assets/moondancer-cutie-mark.svg`](./assets/moondancer-cutie-mark.svg).
+
 
 > This repository is a maintained fork of [houkanshan/vscode-markdown-footnote](https://github.com/houkanshan/vscode-markdown-footnote) by Mai Hou. The upstream work was distributed under the MIT License; its original copyright and permission notice are retained in [`LICENSE-base`](./LICENSE-base). This fork and its modifications are distributed under the GNU Affero General Public License version 3 or, at your option, any later version; see [`LICENSE`](./LICENSE).
+
+## PDF-magic in independent VS Code tabs
+
+Moondancer can display local `.pdf` documents through the **existing local checkout**
+of [PDF-magic/viewer](https://github.com/PDF-magic/viewer). The viewer's built
+JavaScript, CSS, PDF.js worker, images, and navigation features are loaded from
+that checkout at runtime; Moondancer does **not** vendor or fork the viewer.
+
+Build the reader in its own checkout once:
+
+```sh
+cd /path/to/PDF-magic/viewer
+npm install
+npm run build
+```
+
+Set **Moondancer: PDF Viewer Checkout** (`moondancer.pdfViewerCheckout`)
+to the reader repository directory (not its `dist` directory). When unset,
+Moondancer checks common sibling and home paths. Rebuild the viewer there
+after changing its source, then reopen the PDF tab to use the new build.
+
+Opening a local `.pdf` file creates a native VS Code editor tab using the
+PDF-magic UI. To open a remote PDF in its own editor tab, run
+**Open Web PDF with PDF-magic** from the Command Palette and supply its URL.
+The extension host downloads remote PDFs without forwarding your browser
+cookies or authentication tokens; protected websites may refuse the request.
+Local and remote PDFs are read-only. Each editor tab has its own viewer state.
+
+The VS Code adapter supplies document bytes and translates existing reader
+asset URLs; Chrome-only MIME interception and native-messaging enhancement
+aren't available in the VS Code webview. Browser use is unaffected, and
+PDF-magic remains the single source of viewer code.
 
 ## Features
 
@@ -38,6 +72,8 @@
 - Optionally store footnote definitions in a separate sibling file. Enable `vscode-markdown-footnote.separateFootnoteFile` to keep references such as `[^1]` in the source document while definitions are read from and written to `footnotes.md`. The definition file is created automatically when a footnote is first inserted. `vscode-markdown-footnote.footnoteFileName` can change the file name. Hover, go-to-definition, reference lookup, clickable links, and the synchronized side editor follow the definitions across files.
 
 - Spellcheck highlighted Markdown from VS Code's lightbulb / Quick Fix menu. **Spellcheck selection with Spellcheck Only** opens ChatGPT with the selected text addressed to the installed `@Spellcheck Only` plugin. The plugin name can be changed with `vscode-markdown-footnote.spellcheckPluginName`.
+
+- Optionally make **Enter exit closing punctuation** in Markdown. Enable `vscode-markdown-footnote.skipClosingPunctuationOnEnter` (off by default) to move the caret past an immediately following `)`, `]`, or `}` instead of inserting a newline. If no closer follows the caret, Enter keeps its normal behavior. Suggestions, snippet editing, and rename prompts retain their original Enter handling. With multiple cursors, all cursors must precede a closing delimiter to skip; otherwise Enter inserts a newline normally.
 
 - Render footnotes in the built-in markdown preview.
 

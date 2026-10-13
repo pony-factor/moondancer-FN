@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { registerPdfViewer } from './PdfViewer';
 import insertFootnote from './commands/insertFootnote';
 import gotoLineColumn from './commands/gotoLineColumn';
 import FootnoteLinkProvider from './providers/FootnoteLinkProvider';
@@ -8,6 +9,7 @@ import FootnoteDefinitionProvider from './providers/FootnoteDefinitionProvider';
 import FootnoteEditor from './FootnoteEditor';
 import peek from './commands/peek';
 import quickInsertFootnote from './commands/quickInsertFootnote';
+import enterOrExitPunctuation, { ENTER_OR_EXIT_PUNCTUATION_COMMAND } from './commands/enterOrExitPunctuation';
 import blockquoteSelection, { BLOCKQUOTE_SELECTION_COMMAND } from './commands/blockquoteSelection';
 import spellcheckSelection, { SPELLCHECK_SELECTION_COMMAND } from './commands/spellcheckSelection';
 import SpellcheckCodeActionProvider from './providers/SpellcheckCodeActionProvider';
@@ -17,6 +19,7 @@ const mdLangSelector = { language: 'markdown' };
 
 export function activate(context: vscode.ExtensionContext) {
   const footnoteEditor = new FootnoteEditor();
+  registerPdfViewer(context);
 
   context.subscriptions.push(
     footnoteEditor,
@@ -24,6 +27,7 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand('_vscode-markdown-footnote.peek', peek),
     vscode.commands.registerCommand('vscode-markdown-footnote.quickInsertFootnote', quickInsertFootnote),
     vscode.commands.registerCommand(BLOCKQUOTE_SELECTION_COMMAND, blockquoteSelection),
+    vscode.commands.registerCommand(ENTER_OR_EXIT_PUNCTUATION_COMMAND, enterOrExitPunctuation),
     vscode.commands.registerCommand('vscode-markdown-footnote.insertFootnote', (args) =>
       insertFootnote(
         args,

@@ -16,7 +16,7 @@
   "bugs": {
     "url": "https://github.com/pony-factor/moondancer-FN/issues"
   },
-  "icon": "assets/markdown-footnote.png",
+  "icon": "assets/moondancer-icon.png",
   "keywords": [
     "moondancer",
     "markdown",
@@ -34,6 +34,9 @@
     "onCommand:vscode-markdown-footnote.openFootnoteEditor",
     "onCommand:vscode-markdown-footnote.spellcheckSelection",
     "onCommand:vscode-markdown-footnote.quickInsertFootnote",
+    "onCustomEditor:moondancer.pdfViewer",
+    "onCommand:moondancer.openWebPdf",
+    "onCommand:vscode-markdown-footnote.enterOrExitPunctuation",
     "onCommand:vscode-markdown-footnote.blockquoteSelection"
   ],
   "main": "./out/extension.js",
@@ -54,6 +57,14 @@
       {
         "command": "vscode-markdown-footnote.quickInsertFootnote",
         "title": "Quick Insert Footnote"
+      },
+      {
+        "command": "moondancer.openWebPdf",
+        "title": "Open Web PDF with PDF-magic"
+      },
+      {
+        "command": "vscode-markdown-footnote.enterOrExitPunctuation",
+        "title": "Enter or Exit Closing Punctuation"
       },
       {
         "command": "vscode-markdown-footnote.blockquoteSelection",
@@ -79,6 +90,16 @@
           "default": "Spellcheck Only",
           "description": "Installed ChatGPT plugin name used by the Markdown spellcheck code action."
         },
+        "moondancer.pdfViewerCheckout": {
+          "type": "string",
+          "default": "",
+          "description": "Path to a local PDF-magic/viewer checkout with a built dist/ directory. When empty, Moondancer searches nearby workspace and home directories."
+        },
+        "vscode-markdown-footnote.skipClosingPunctuationOnEnter": {
+          "type": "boolean",
+          "default": false,
+          "description": "When enabled, Enter moves past a closing ), ], or } immediately following the cursor in Markdown; otherwise Enter inserts a new line as usual."
+        },
         "vscode-markdown-footnote.blockquoteSelectionShortcut": {
           "type": "boolean",
           "default": true,
@@ -94,10 +115,27 @@
         "when": "editorTextFocus && editorLangId == markdown"
       },
       {
+        "command": "vscode-markdown-footnote.enterOrExitPunctuation",
+        "key": "enter",
+        "when": "editorTextFocus && editorLangId == markdown && !editorReadonly && !suggestWidgetVisible && !inSnippetMode && !renameInputVisible && config.vscode-markdown-footnote.skipClosingPunctuationOnEnter"
+      },
+      {
         "command": "vscode-markdown-footnote.blockquoteSelection",
         "key": "ctrl+.",
         "mac": "cmd+.",
         "when": "editorTextFocus && !editorReadonly && editorLangId == markdown && editorHasSelection && config.vscode-markdown-footnote.blockquoteSelectionShortcut"
+      }
+    ],
+    "customEditors": [
+      {
+        "viewType": "moondancer.pdfViewer",
+        "displayName": "PDF-magic Viewer",
+        "selector": [
+          {
+            "filenamePattern": "*.pdf"
+          }
+        ],
+        "priority": "default"
       }
     ]
   },

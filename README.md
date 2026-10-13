@@ -1,5 +1,5 @@
 <p align="center" style="margin: 0">
-  <a href="https://github.com/pony-factor/moondancer-FN"><img src="./assets/markdown-footnote.png" alt="Moondancer FN" width="80" /></a>
+  <a href="https://github.com/pony-factor/moondancer-FN"><img src="./assets/moondancer-icon.png" alt="Moon Dancer cutie mark: purple crescent and three pink stars" width="80" /></a>
 </p>
 <h1 align="center" style="margin-top: 0">Moondancer FN</h1>
 
@@ -7,8 +7,42 @@
 
 `[^1]` [footnote syntax](https://www.markdownguide.org/extended-syntax/#footnotes) support to VS Code's Markdown editor and preview.
 
+The extension icon and README emblem use Moon Dancer's purple-crescent-and-three-pink-stars cutie mark. The editable vector artwork is in [`assets/moondancer-cutie-mark.svg`](./assets/moondancer-cutie-mark.svg).
+
 
 > This repository is a maintained fork of [houkanshan/vscode-markdown-footnote](https://github.com/houkanshan/vscode-markdown-footnote) by Mai Hou. The upstream work was distributed under the MIT License; its original copyright and permission notice are retained in [`LICENSE-base`](./LICENSE-base). This fork and its modifications are distributed under the GNU Affero General Public License version 3 or, at your option, any later version; see [`LICENSE`](./LICENSE).
+
+## PDF-magic in independent VS Code tabs
+
+Moondancer can display local `.pdf` documents through the **existing local checkout**
+of [PDF-magic/viewer](https://github.com/PDF-magic/viewer). The viewer's built
+JavaScript, CSS, PDF.js worker, images, and navigation features are loaded from
+that checkout at runtime; Moondancer does **not** vendor or fork the viewer.
+
+Build the reader in its own checkout once:
+
+```sh
+cd /path/to/PDF-magic/viewer
+npm install
+npm run build
+```
+
+Set **Moondancer: PDF Viewer Checkout** (`moondancer.pdfViewerCheckout`)
+to the reader repository directory (not its `dist` directory). When unset,
+Moondancer checks common sibling and home paths. Rebuild the viewer there
+after changing its source, then reopen the PDF tab to use the new build.
+
+Opening a local `.pdf` file creates a native VS Code editor tab using the
+PDF-magic UI. To open a remote PDF in its own editor tab, run
+**Open Web PDF with PDF-magic** from the Command Palette and supply its URL.
+The extension host downloads remote PDFs without forwarding your browser
+cookies or authentication tokens; protected websites may refuse the request.
+Local and remote PDFs are read-only. Each editor tab has its own viewer state.
+
+The VS Code adapter supplies document bytes and translates existing reader
+asset URLs; Chrome-only MIME interception and native-messaging enhancement
+aren't available in the VS Code webview. Browser use is unaffected, and
+PDF-magic remains the single source of viewer code.
 
 ## Features
 

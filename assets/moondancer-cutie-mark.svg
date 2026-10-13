@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title description">
+  <title id="title">Moon Dancer cutie mark</title>
+  <desc id="description">A deep purple crescent moon with three pink four-pointed stars on a cream background.</desc>
+  <rect x="8" y="8" width="496" height="496" rx="104" fill="#F9F8D3" />
+  <path
+    fill="#663E64"
+    d="M 122 105 C 244 64 369 132 369 272 C 369 389 297 457 198 457 C 134 457 85 424 61 378 C 115 426 195 418 242 382 C 285 345 298 282 284 224 C 266 149 209 107 122 105 Z"
+  />
+  <g fill="#C670B7">
+    <path d="M 414 47 L 434 87 L 475 99 L 434 114 L 421 156 L 401 116 L 359 101 L 400 87 Z" />
+    <path d="M 86 185 L 103 226 L 143 243 L 104 258 L 91 304 L 74 261 L 35 244 L 74 226 Z" />
+    <path d="M 414 360 L 433 406 L 477 423 L 434 439 L 420 483 L 400 441 L 354 425 L 399 408 Z" />
+  </g>
+</svg>

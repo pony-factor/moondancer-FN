@@ -35,7 +35,8 @@
     "onCommand:vscode-markdown-footnote.spellcheckSelection",
     "onCommand:vscode-markdown-footnote.quickInsertFootnote",
     "onCustomEditor:moondancer.pdfViewer",
-    "onCommand:moondancer.openWebPdf"
+    "onCommand:moondancer.openWebPdf",
+    "onCommand:vscode-markdown-footnote.enterOrExitPunctuation"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -59,6 +60,10 @@
       {
         "command": "moondancer.openWebPdf",
         "title": "Open Web PDF with PDF-magic"
+      },
+      {
+        "command": "vscode-markdown-footnote.enterOrExitPunctuation",
+        "title": "Enter or Exit Closing Punctuation"
       }
     ],
     "markdown.markdownItPlugins": true,
@@ -84,6 +89,11 @@
           "type": "string",
           "default": "",
           "description": "Path to a local PDF-magic/viewer checkout with a built dist/ directory. When empty, Moondancer searches nearby workspace and home directories."
+        },
+        "vscode-markdown-footnote.skipClosingPunctuationOnEnter": {
+          "type": "boolean",
+          "default": false,
+          "description": "When enabled, Enter moves past a closing ), ], or } immediately following the cursor in Markdown; otherwise Enter inserts a new line as usual."
         }
       }
     },
@@ -93,6 +103,11 @@
         "key": "ctrl+shift+6",
         "mac": "cmd+shift+6",
         "when": "editorTextFocus && editorLangId == markdown"
+      },
+      {
+        "command": "vscode-markdown-footnote.enterOrExitPunctuation",
+        "key": "enter",
+        "when": "editorTextFocus && editorLangId == markdown && !editorReadonly && !suggestWidgetVisible && !inSnippetMode && !renameInputVisible && config.vscode-markdown-footnote.skipClosingPunctuationOnEnter"
       }
     ],
     "customEditors": [
